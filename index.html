@@ -9,72 +9,244 @@
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root, [data-theme="light"] {
-      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
-      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
-      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
-      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem;
-      --color-bg:#f7f6f2; --color-surface:#f9f8f5; --color-surface-2:#fbfbf9; --color-surface-offset:#f3f0ec; --color-surface-offset-2:#edeae5; --color-border:rgba(40,37,29,.12); --color-divider:#dcd9d5;
-      --color-text:#28251d; --color-text-muted:#6b6963; --color-text-faint:#9a9893; --color-text-inverse:#f9f8f4;
-      --color-primary:#01696f; --color-primary-hover:#0c4e54; --color-primary-active:#0f3638; --color-primary-highlight:#cedcd8;
-      --color-success:#437a22; --color-success-highlight:rgba(67,122,34,.12);
-      --color-error:#a12c7b; --color-error-highlight:rgba(161,44,123,.12);
-      --color-warning:#964219; --color-warning-highlight:rgba(150,66,25,.12);
-      --color-blue:#006494; --color-blue-highlight:rgba(0,100,148,.12);
-      --color-gold:#d19900; --color-gold-highlight:rgba(209,153,0,.12);
-      --radius-sm:.375rem; --radius-md:.5rem; --radius-lg:.75rem; --radius-xl:1rem; --radius-full:9999px;
-      --shadow-sm:0 1px 2px rgba(0,0,0,.05); --shadow-md:0 10px 24px rgba(0,0,0,.08); --shadow-lg:0 18px 40px rgba(0,0,0,.12);
-      --transition:180ms cubic-bezier(0.16,1,0.3,1); --sidebar-w:280px; --header-h:76px; --font-body:'Satoshi', Inter, system-ui, sans-serif;
+    :root,[data-theme="light"]{
+      --text-xs:clamp(0.75rem,0.7rem + 0.25vw,0.875rem);
+      --text-sm:clamp(0.875rem,0.8rem + 0.35vw,1rem);
+      --text-base:clamp(1rem,0.95rem + 0.25vw,1.125rem);
+      --text-lg:clamp(1.125rem,1rem + 0.75vw,1.5rem);
+      --text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);
+      --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;
+      --color-bg:#f7f6f2;--color-surface:#f9f8f5;--color-surface-2:#fbfbf9;--color-surface-offset:#f3f0ec;--color-surface-offset-2:#edeae5;
+      --color-border:rgba(40,37,29,.12);--color-divider:#dcd9d5;
+      --color-text:#28251d;--color-text-muted:#6b6963;--color-text-faint:#9a9893;--color-text-inverse:#f9f8f4;
+      --color-primary:#01696f;--color-primary-hover:#0c4e54;--color-primary-active:#0f3638;--color-primary-highlight:#cedcd8;
+      --color-success:#437a22;--color-success-highlight:rgba(67,122,34,.12);
+      --color-error:#a12c7b;--color-error-highlight:rgba(161,44,123,.12);
+      --color-warning:#964219;--color-warning-highlight:rgba(150,66,25,.12);
+      --color-blue:#006494;--color-blue-highlight:rgba(0,100,148,.12);
+      --color-gold:#d19900;--color-gold-highlight:rgba(209,153,0,.12);
+      --color-topbar-bg:rgba(247,246,242,.88);
+      --color-row-hover:rgba(1,105,111,.04);
+      --color-primary-faint:rgba(1,105,111,.1);
+      --radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;
+      --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow-md:0 10px 24px rgba(0,0,0,.08);--shadow-lg:0 18px 40px rgba(0,0,0,.12);
+      --transition:180ms cubic-bezier(0.16,1,0.3,1);--sidebar-w:280px;--header-h:76px;
+      --font-body:'Satoshi',Inter,system-ui,sans-serif;
     }
-    [data-theme="dark"] { --color-bg:#171614; --color-surface:#1c1b19; --color-surface-2:#201f1d; --color-surface-offset:#1d1c1a; --color-surface-offset-2:#22211f; --color-border:rgba(255,255,255,.12); --color-divider:#262523; --color-text:#cdccca; --color-text-muted:#979590; --color-text-faint:#6e6c68; --color-text-inverse:#111; --color-primary:#4f98a3; --color-primary-hover:#227f8b; --color-primary-active:#1a626b; --color-primary-highlight:rgba(79,152,163,.16); --color-success:#78b451; --color-success-highlight:rgba(120,180,81,.14); --color-error:#d163a7; --color-error-highlight:rgba(209,99,167,.14); --color-warning:#bb653b; --color-warning-highlight:rgba(187,101,59,.14); --color-blue:#5591c7; --color-blue-highlight:rgba(85,145,199,.14); --color-gold:#e8af34; --color-gold-highlight:rgba(232,175,52,.14); --shadow-sm:0 1px 2px rgba(0,0,0,.2); --shadow-md:0 10px 24px rgba(0,0,0,.25); --shadow-lg:0 18px 40px rgba(0,0,0,.34); }
-    *{box-sizing:border-box} html,body{height:100%;overflow:hidden;margin:0} body{font-family:var(--font-body);font-size:var(--text-base);line-height:1.5;color:var(--color-text);background:var(--color-bg)} a{text-decoration:none;color:inherit} button,input,select{font:inherit;color:inherit} button{cursor:pointer} .skip-link{position:absolute;left:var(--space-4);top:-100px;background:var(--color-primary);color:var(--color-text-inverse);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);z-index:200}.skip-link:focus{top:var(--space-4)}
-    .shell{display:grid;grid-template-columns:var(--sidebar-w) minmax(0,1fr);grid-template-rows:var(--header-h) minmax(0,1fr);height:100dvh}
-    .sidebar{grid-row:1/-1;background:linear-gradient(180deg,var(--color-surface),var(--color-surface-offset));border-right:1px solid var(--color-border);padding:var(--space-6);overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:var(--space-6)}
-    .brand{display:flex;align-items:center;gap:var(--space-3)} .brand svg{width:40px;height:40px;color:var(--color-primary)} .brand-title{font-size:var(--text-sm);font-weight:900} .brand-sub{font-size:var(--text-xs);color:var(--color-text-muted)}
-    .section-label{color:var(--color-text-faint);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.12em;margin-bottom:var(--space-2)} .nav-group{display:grid;gap:var(--space-2)} .nav-btn{display:flex;align-items:center;gap:var(--space-3);width:100%;min-height:48px;padding:var(--space-3) var(--space-4);border:1px solid transparent;border-radius:var(--radius-lg);background:transparent;color:var(--color-text-muted);text-align:left;transition:all var(--transition)} .nav-btn.active,.nav-btn:hover,.nav-btn:focus-visible{background:var(--color-surface-2);color:var(--color-text);border-color:var(--color-border);outline:none} .nav-btn.active{background:var(--color-primary-highlight);color:var(--color-primary-active)} .nav-icon{width:18px;height:18px;display:inline-grid;place-items:center}
-    .sidebar-card{padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-xl);background:var(--color-surface-2);box-shadow:var(--shadow-sm)} .sidebar-card h3{margin:0 0 var(--space-2);font-size:var(--text-sm)} .sidebar-card p{margin:0 0 var(--space-4);font-size:var(--text-xs);color:var(--color-text-muted)}
-    .topbar{grid-column:2;position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--color-border);background:color-mix(in srgb,var(--color-bg) 84%,transparent);backdrop-filter:blur(12px)} .topbar-left{display:flex;align-items:center;gap:var(--space-4);min-width:0} .topbar h1{margin:0;font-size:var(--text-xl);line-height:1.05;font-weight:900;letter-spacing:-.02em} .topbar-sub{color:var(--color-text-muted);font-size:var(--text-sm);margin-top:var(--space-1)} .topbar-actions{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap;justify-content:flex-end}
-    .main{grid-column:2;min-width:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--space-6)} .page{display:none;animation:fadeIn 180ms ease} .page.active{display:block} @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-    .grid{display:grid;gap:var(--space-4)} .kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:var(--space-4)} .two-col{grid-template-columns:1.3fr 1fr;margin-bottom:var(--space-4)} .three-col{grid-template-columns:1.1fr 1.1fr .9fr;margin-bottom:var(--space-4)}
-    .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm);padding:var(--space-5);min-width:0} .card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-3);margin-bottom:var(--space-4)} .card-title{margin:0;font-size:var(--text-lg);line-height:1.15;font-weight:800} .card-note{color:var(--color-text-muted);font-size:var(--text-xs);margin-top:var(--space-1)}
-    .kpi-card{position:relative;overflow:hidden} .kpi-card::after{content:"";position:absolute;inset:auto -18px -24px auto;width:96px;height:96px;border-radius:50%;background:color-mix(in srgb,var(--color-primary) 10%,transparent);pointer-events:none} .eyebrow{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.12em;color:var(--color-text-faint);margin-bottom:var(--space-2)} .kpi-value{font-size:clamp(1.7rem,1.4rem + 1vw,2.4rem);line-height:1;font-weight:900;letter-spacing:-.03em;font-variant-numeric:tabular-nums lining-nums;margin-bottom:var(--space-2)} .delta{display:inline-flex;align-items:center;gap:var(--space-2);border-radius:var(--radius-full);padding:.3rem .65rem;font-size:var(--text-xs);font-weight:700;font-variant-numeric:tabular-nums lining-nums} .delta.up{background:var(--color-success-highlight);color:var(--color-success)} .delta.down{background:var(--color-error-highlight);color:var(--color-error)} .delta.flat{background:var(--color-blue-highlight);color:var(--color-blue)}
+    [data-theme="dark"]{
+      --color-bg:#171614;--color-surface:#1c1b19;--color-surface-2:#201f1d;--color-surface-offset:#1d1c1a;--color-surface-offset-2:#22211f;
+      --color-border:rgba(255,255,255,.12);--color-divider:#262523;
+      --color-text:#cdccca;--color-text-muted:#979590;--color-text-faint:#6e6c68;--color-text-inverse:#111;
+      --color-primary:#4f98a3;--color-primary-hover:#227f8b;--color-primary-active:#1a626b;--color-primary-highlight:rgba(79,152,163,.16);
+      --color-success:#78b451;--color-success-highlight:rgba(120,180,81,.14);
+      --color-error:#d163a7;--color-error-highlight:rgba(209,99,167,.14);
+      --color-warning:#bb653b;--color-warning-highlight:rgba(187,101,59,.14);
+      --color-blue:#5591c7;--color-blue-highlight:rgba(85,145,199,.14);
+      --color-gold:#e8af34;--color-gold-highlight:rgba(232,175,52,.14);
+      --color-topbar-bg:rgba(23,22,20,.88);
+      --color-row-hover:rgba(79,152,163,.05);
+      --color-primary-faint:rgba(79,152,163,.1);
+      --shadow-sm:0 1px 2px rgba(0,0,0,.2);--shadow-md:0 10px 24px rgba(0,0,0,.25);--shadow-lg:0 18px 40px rgba(0,0,0,.34);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;overflow:hidden;margin:0}
+    body{font-family:var(--font-body);font-size:var(--text-base);line-height:1.5;color:var(--color-text);background:var(--color-bg)}
+    a{text-decoration:none;color:inherit}
+    button,input,select{font:inherit;color:inherit}
+    button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .skip-link{position:absolute;left:var(--space-4);top:-100px;background:var(--color-primary);color:var(--color-text-inverse);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);z-index:200}
+    .skip-link:focus{top:var(--space-4)}
+    /* SHELL */
+    .shell{display:grid;grid-template-columns:var(--sidebar-w) minmax(0,1fr);grid-template-rows:var(--header-h) minmax(0,1fr);height:100vh;height:100dvh}
+    /* SIDEBAR */
+    .sidebar{
+      grid-row:1/-1;
+      background:linear-gradient(180deg,var(--color-surface),var(--color-surface-offset));
+      border-right:1px solid var(--color-border);
+      padding:var(--space-6);
+      overflow-y:auto;
+      overscroll-behavior:contain;
+      display:flex;
+      flex-direction:column;
+      gap:var(--space-6);
+      z-index:40;
+    }
+    .brand{display:flex;align-items:center;gap:var(--space-3)}
+    .brand svg{width:40px;height:40px;color:var(--color-primary)}
+    .brand-title{font-size:var(--text-sm);font-weight:900}
+    .brand-sub{font-size:var(--text-xs);color:var(--color-text-muted)}
+    .section-label{color:var(--color-text-faint);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.12em;margin-bottom:var(--space-2)}
+    .nav-group{display:grid;gap:var(--space-2)}
+    .nav-btn{display:flex;align-items:center;gap:var(--space-3);width:100%;min-height:48px;padding:var(--space-3) var(--space-4);border:1px solid transparent;border-radius:var(--radius-lg);background:transparent;color:var(--color-text-muted);text-align:left;transition:all var(--transition)}
+    .nav-btn.active,.nav-btn:hover,.nav-btn:focus-visible{background:var(--color-surface-2);color:var(--color-text);border-color:var(--color-border);outline:none}
+    .nav-btn.active{background:var(--color-primary-highlight);color:var(--color-primary-active)}
+    .nav-icon{width:18px;height:18px;display:inline-grid;place-items:center}
+    .sidebar-card{padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-xl);background:var(--color-surface-2);box-shadow:var(--shadow-sm)}
+    .sidebar-card h3{margin:0 0 var(--space-2);font-size:var(--text-sm)}
+    .sidebar-card p{margin:0 0 var(--space-4);font-size:var(--text-xs);color:var(--color-text-muted)}
+    /* OVERLAY (mobile sidebar backdrop) */
+    .sidebar-overlay{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      z-index:39;
+      -webkit-backdrop-filter:blur(4px);
+      backdrop-filter:blur(4px);
+    }
+    .sidebar-overlay.visible{display:block}
+    /* TOPBAR */
+    .topbar{
+      grid-column:2;
+      position:sticky;
+      top:0;
+      z-index:20;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:var(--space-4);
+      padding:var(--space-4) var(--space-6);
+      border-bottom:1px solid var(--color-border);
+      background:var(--color-topbar-bg);
+      -webkit-backdrop-filter:blur(12px);
+      backdrop-filter:blur(12px);
+    }
+    .topbar-left{display:flex;align-items:center;gap:var(--space-4);min-width:0}
+    .topbar h1{margin:0;font-size:var(--text-xl);line-height:1.05;font-weight:900;letter-spacing:-.02em}
+    .topbar-sub{color:var(--color-text-muted);font-size:var(--text-sm);margin-top:var(--space-1)}
+    .topbar-actions{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap;justify-content:flex-end}
+    /* MAIN */
+    .main{grid-column:2;min-width:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--space-6)}
+    .page{display:none;animation:fadeIn 180ms ease}
+    .page.active{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    /* GRID LAYOUTS */
+    .grid{display:grid;gap:var(--space-4)}
+    .kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:var(--space-4)}
+    .two-col{grid-template-columns:1.3fr 1fr;margin-bottom:var(--space-4)}
+    .three-col{grid-template-columns:1.1fr 1.1fr .9fr;margin-bottom:var(--space-4)}
+    /* CARD */
+    .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm);padding:var(--space-5);min-width:0}
+    .card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-3);margin-bottom:var(--space-4)}
+    .card-title{margin:0;font-size:var(--text-lg);line-height:1.15;font-weight:800}
+    .card-note{color:var(--color-text-muted);font-size:var(--text-xs);margin-top:var(--space-1)}
+    /* KPI */
+    .kpi-card{position:relative;overflow:hidden}
+    .kpi-card::after{content:"";position:absolute;inset:auto -18px -24px auto;width:96px;height:96px;border-radius:50%;background:var(--color-primary-faint);pointer-events:none}
+    .eyebrow{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.12em;color:var(--color-text-faint);margin-bottom:var(--space-2)}
+    .kpi-value{font-size:clamp(1.7rem,1.4rem + 1vw,2.4rem);line-height:1;font-weight:900;letter-spacing:-.03em;font-variant-numeric:tabular-nums lining-nums;margin-bottom:var(--space-2)}
+    .delta{display:inline-flex;align-items:center;gap:var(--space-2);border-radius:var(--radius-full);padding:.3rem .65rem;font-size:var(--text-xs);font-weight:700;font-variant-numeric:tabular-nums lining-nums}
+    .delta.up{background:var(--color-success-highlight);color:var(--color-success)}
+    .delta.down{background:var(--color-error-highlight);color:var(--color-error)}
+    .delta.flat{background:var(--color-blue-highlight);color:var(--color-blue)}
+    /* MISC */
     .pill{display:inline-flex;align-items:center;gap:var(--space-2);padding:.35rem .7rem;border-radius:var(--radius-full);background:var(--color-surface-offset);color:var(--color-text-muted);font-size:var(--text-xs);font-weight:700}
-    .btn{min-height:44px;border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface-2);color:var(--color-text);padding:.75rem 1rem;font-size:var(--text-sm);font-weight:700;transition:all var(--transition)} .btn:hover,.btn:focus-visible{transform:translateY(-1px);box-shadow:var(--shadow-sm);outline:none} .btn-primary{background:var(--color-primary);border-color:transparent;color:var(--color-text-inverse)} .btn-primary:hover,.btn-primary:focus-visible{background:var(--color-primary-hover)} .btn-ghost{background:transparent}
-    .stack{display:flex;flex-direction:column;gap:var(--space-3)} .row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3)} .muted{color:var(--color-text-muted)} .mono{font-variant-numeric:tabular-nums lining-nums}
-    .budget-bars,.goal-list,.account-list,.holdings-list,.sync-list,.insight-list{display:grid;gap:var(--space-3)} .metric-line{display:grid;gap:.45rem} .bar-row{display:grid;gap:.45rem} .bar-meta{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);font-size:var(--text-sm);font-variant-numeric:tabular-nums lining-nums} .bar-track{height:10px;border-radius:var(--radius-full);background:var(--color-surface-offset-2);overflow:hidden} .bar-fill{height:100%;border-radius:var(--radius-full);background:linear-gradient(90deg,var(--color-primary),var(--color-blue));width:0;transition:width 500ms ease} .bar-fill.warn{background:linear-gradient(90deg,var(--color-gold),var(--color-warning))} .bar-fill.danger{background:linear-gradient(90deg,var(--color-warning),#8f2644)} .bar-fill.good{background:linear-gradient(90deg,var(--color-success),var(--color-primary))}
-    .table-wrap{overflow-x:auto;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2)} table{width:100%;border-collapse:collapse;min-width:720px} th,td{padding:.9rem 1rem;text-align:left;border-bottom:1px solid var(--color-border);font-size:var(--text-sm)} th{position:sticky;top:0;background:var(--color-surface-offset);z-index:1;color:var(--color-text-muted);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em} tbody tr:hover{background:color-mix(in srgb,var(--color-primary) 4%,transparent)} tbody tr:last-child td{border-bottom:0}
-    .account-item,.holding-item,.goal-item,.sync-item,.insight-item{display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-3);align-items:center;padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2)} .icon-box{width:42px;height:42px;border-radius:12px;background:var(--color-primary-highlight);color:var(--color-primary-active);display:grid;place-items:center;font-weight:900} .account-name,.holding-name,.goal-name{font-weight:800;font-size:var(--text-sm)} .account-meta,.holding-meta,.goal-meta,.sync-meta,.insight-meta{color:var(--color-text-muted);font-size:var(--text-xs);margin-top:.2rem} .account-value,.holding-value,.goal-value{text-align:right;font-weight:900;font-variant-numeric:tabular-nums lining-nums;font-size:var(--text-sm)} .account-value span,.holding-value span,.goal-value span{display:block;color:var(--color-text-muted);font-size:var(--text-xs);margin-top:.2rem;font-weight:600}
-    .legend{display:flex;gap:var(--space-3);flex-wrap:wrap;margin-top:var(--space-4)} .legend-item{display:inline-flex;align-items:center;gap:var(--space-2);color:var(--color-text-muted);font-size:var(--text-xs);font-weight:700} .swatch{width:10px;height:10px;border-radius:50%}
-    .progress-ring{width:92px;height:92px;position:relative;margin-inline:auto} .progress-ring svg{transform:rotate(-90deg)} .progress-ring .center-label{position:absolute;inset:0;display:grid;place-items:center;font-size:var(--text-sm);font-weight:900;font-variant-numeric:tabular-nums lining-nums}
-    .sync-architecture{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--space-3)} .sync-step{padding:var(--space-4);border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface-2)} .sync-step h4{margin:0 0 var(--space-2);font-size:var(--text-sm)} .sync-step p{margin:0;color:var(--color-text-muted);font-size:var(--text-xs)}
-    .mobile-toggle{display:none} dialog{border:0;padding:0;width:min(560px, calc(100vw - 2rem));border-radius:var(--radius-xl);background:var(--color-surface);color:var(--color-text);box-shadow:var(--shadow-lg)} dialog::backdrop{background:rgba(0,0,0,.45);backdrop-filter:blur(6px)} .modal{padding:var(--space-6)} .modal h2{margin:0 0 var(--space-2);font-size:var(--text-lg)} .modal p{margin:0 0 var(--space-5);color:var(--color-text-muted);font-size:var(--text-sm)} .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)} .field{display:grid;gap:var(--space-2)} .field.full{grid-column:1/-1} label{font-size:var(--text-xs);font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted)} input,select{min-height:46px;padding:.8rem .9rem;border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface-2);outline:none} input:focus,select:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--color-primary) 18%,transparent)} .modal-actions{display:flex;justify-content:flex-end;gap:var(--space-3);margin-top:var(--space-6);flex-wrap:wrap}
-    .empty-note{padding:var(--space-4);border-radius:var(--radius-lg);border:1px dashed var(--color-border);color:var(--color-text-muted);background:var(--color-surface-2);font-size:var(--text-sm)}
-    @media (max-width:1180px){.kpi-grid,.two-col,.three-col,.sync-architecture{grid-template-columns:repeat(2,minmax(0,1fr))}} @media (max-width:960px){.shell{grid-template-columns:1fr}.sidebar{position:fixed;inset:0 auto 0 0;width:min(320px,86vw);transform:translateX(-100%);transition:transform var(--transition);box-shadow:var(--shadow-lg)} .sidebar.open{transform:translateX(0)} .topbar,.main{grid-column:1}.mobile-toggle{display:inline-flex}} @media (max-width:720px){.main,.topbar{padding-inline:var(--space-4)} .kpi-grid,.two-col,.three-col,.sync-architecture,.form-grid{grid-template-columns:1fr} .topbar{align-items:flex-start} .topbar-actions{width:100%;justify-content:flex-start} .account-item,.holding-item,.goal-item,.sync-item,.insight-item{grid-template-columns:auto 1fr} .account-value,.holding-value,.goal-value{grid-column:2;text-align:left}}
+    .btn{min-height:44px;border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface-2);color:var(--color-text);padding:.75rem 1rem;font-size:var(--text-sm);font-weight:700;transition:all var(--transition)}
+    .btn:hover,.btn:focus-visible{transform:translateY(-1px);box-shadow:var(--shadow-sm);outline:none}
+    .btn-primary{background:var(--color-primary);border-color:transparent;color:var(--color-text-inverse)}
+    .btn-primary:hover,.btn-primary:focus-visible{background:var(--color-primary-hover)}
+    .btn-ghost{background:transparent}
+    .stack{display:flex;flex-direction:column;gap:var(--space-3)}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3)}
+    .muted{color:var(--color-text-muted)}
+    .mono{font-variant-numeric:tabular-nums lining-nums}
+    /* BARS */
+    .budget-bars,.goal-list,.account-list,.holdings-list,.sync-list,.insight-list{display:grid;gap:var(--space-3)}
+    .metric-line{display:grid;gap:.45rem}
+    .bar-row{display:grid;gap:.45rem}
+    .bar-meta{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);font-size:var(--text-sm);font-variant-numeric:tabular-nums lining-nums}
+    .bar-track{height:10px;border-radius:var(--radius-full);background:var(--color-surface-offset-2);overflow:hidden}
+    .bar-fill{height:100%;border-radius:var(--radius-full);background:linear-gradient(90deg,var(--color-primary),var(--color-blue));width:0;transition:width 500ms ease}
+    .bar-fill.warn{background:linear-gradient(90deg,var(--color-gold),var(--color-warning))}
+    .bar-fill.danger{background:linear-gradient(90deg,var(--color-warning),#8f2644)}
+    .bar-fill.good{background:linear-gradient(90deg,var(--color-success),var(--color-primary))}
+    /* TABLE */
+    .table-wrap{overflow-x:auto;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2)}
+    table{width:100%;border-collapse:collapse;min-width:720px}
+    th,td{padding:.9rem 1rem;text-align:left;border-bottom:1px solid var(--color-border);font-size:var(--text-sm)}
+    th{position:sticky;top:0;background:var(--color-surface-offset);z-index:1;color:var(--color-text-muted);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em}
+    tbody tr:hover{background:var(--color-row-hover)}
+    tbody tr:last-child td{border-bottom:0}
+    /* LIST ITEMS */
+    .account-item,.holding-item,.goal-item,.sync-item,.insight-item{display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-3);align-items:center;padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2)}
+    .icon-box{width:42px;height:42px;border-radius:12px;background:var(--color-primary-highlight);color:var(--color-primary-active);display:grid;place-items:center;font-weight:900}
+    .account-name,.holding-name,.goal-name{font-weight:800;font-size:var(--text-sm)}
+    .account-meta,.holding-meta,.goal-meta,.sync-meta,.insight-meta{color:var(--color-text-muted);font-size:var(--text-xs);margin-top:.2rem}
+    .account-value,.holding-value,.goal-value{text-align:right;font-weight:900;font-variant-numeric:tabular-nums lining-nums;font-size:var(--text-sm)}
+    .account-value span,.holding-value span,.goal-value span{display:block;color:var(--color-text-muted);font-size:var(--text-xs);margin-top:.2rem;font-weight:600}
+    /* LEGEND */
+    .legend{display:flex;gap:var(--space-3);flex-wrap:wrap;margin-top:var(--space-4)}
+    .legend-item{display:inline-flex;align-items:center;gap:var(--space-2);color:var(--color-text-muted);font-size:var(--text-xs);font-weight:700}
+    .swatch{width:10px;height:10px;border-radius:50%}
+    /* DETAILS/SUMMARY fix for Safari */
+    details summary{list-style:none;-webkit-appearance:none}
+    details summary::-webkit-details-marker{display:none}
+    /* MOBILE TOGGLE */
+    .mobile-toggle{display:none}
+    /* DIALOG */
+    dialog{border:0;padding:0;width:min(560px,calc(100vw - 2rem));border-radius:var(--radius-xl);background:var(--color-surface);color:var(--color-text);box-shadow:var(--shadow-lg)}
+    dialog::backdrop{background:rgba(0,0,0,.45);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+    .modal{padding:var(--space-6)}
+    .modal h2{margin:0 0 var(--space-2);font-size:var(--text-lg)}
+    .modal p{margin:0 0 var(--space-5);color:var(--color-text-muted);font-size:var(--text-sm)}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}
+    .field{display:grid;gap:var(--space-2)}
+    .field.full{grid-column:1/-1}
+    label{font-size:var(--text-xs);font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted)}
+    input,select{min-height:46px;padding:.8rem .9rem;border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface-2);outline:none;-webkit-appearance:none;appearance:none}
+    input:focus,select:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(1,105,111,.18)}
+    .modal-actions{display:flex;justify-content:flex-end;gap:var(--space-3);margin-top:var(--space-6);flex-wrap:wrap}
+    /* RESPONSIVE */
+    @media (max-width:1180px){.kpi-grid,.two-col,.three-col{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media (max-width:960px){
+      .shell{grid-template-columns:1fr}
+      .sidebar{
+        position:fixed;
+        inset:0 auto 0 0;
+        width:min(320px,86vw);
+        transform:translateX(-100%);
+        transition:transform var(--transition);
+        box-shadow:var(--shadow-lg);
+        z-index:40;
+      }
+      .sidebar.open{transform:translateX(0)}
+      .topbar,.main{grid-column:1}
+      .mobile-toggle{display:inline-flex}
+    }
+    @media (max-width:720px){
+      .main,.topbar{padding-inline:var(--space-4)}
+      .kpi-grid,.two-col,.three-col,.form-grid{grid-template-columns:1fr}
+      .topbar{align-items:flex-start}
+      .topbar-actions{width:100%;justify-content:flex-start}
+      .account-item,.holding-item,.goal-item,.sync-item,.insight-item{grid-template-columns:auto 1fr}
+      .account-value,.holding-value,.goal-value{grid-column:2;text-align:left}
+    }
     @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
   </style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
+<!-- Overlay for mobile sidebar -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="shell">
-  <aside class="sidebar" id="sidebar">
+  <aside class="sidebar" id="sidebar" aria-label="Navigation">
     <div class="brand">
-      <svg viewBox="0 0 64 64" fill="none" aria-label="Money Atlas logo" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="8" width="48" height="48" rx="16" stroke="currentColor" stroke-width="4"/><path d="M18 39C22 31 26 26 31 26C36 26 39 31 42 35C45 39 47 41 50 41" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M17 46H47" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="21" r="3.5" fill="currentColor"/></svg>
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="8" width="48" height="48" rx="16" stroke="currentColor" stroke-width="4"/><path d="M18 39C22 31 26 26 31 26C36 26 39 31 42 35C45 39 47 41 50 41" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M17 46H47" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="21" r="3.5" fill="currentColor"/></svg>
       <div><div class="brand-title">Money Atlas</div><div class="brand-sub">Budget. Invest. Track. Decide.</div></div>
     </div>
     <nav aria-label="Primary">
       <div class="section-label">Pages</div>
       <div class="nav-group" id="navGroup">
-        <button class="nav-btn active" data-page="budget"><span class="nav-icon">$</span><span>Budget</span></button>
-        <button class="nav-btn" data-page="investments"><span class="nav-icon">%</span><span>Investments</span></button>
-        <button class="nav-btn" data-page="networth"><span class="nav-icon">#</span><span>Net worth</span></button>
-        <button class="nav-btn" data-page="accounts"><span class="nav-icon">+</span><span>Accounts</span></button>
+        <button class="nav-btn active" data-page="budget" type="button"><span class="nav-icon" aria-hidden="true">$</span><span>Budget</span></button>
+        <button class="nav-btn" data-page="investments" type="button"><span class="nav-icon" aria-hidden="true">%</span><span>Investments</span></button>
+        <button class="nav-btn" data-page="networth" type="button"><span class="nav-icon" aria-hidden="true">#</span><span>Net worth</span></button>
+        <button class="nav-btn" data-page="accounts" type="button"><span class="nav-icon" aria-hidden="true">+</span><span>Accounts</span></button>
       </div>
     </nav>
     <div class="sidebar-card">
-      <h3>Rule</h3><p>Track cash first. Then build assets. Then stop being stupid with leverage.</p>
-      <button class="btn btn-primary" id="openAddAccountSidebar">Add account</button>
+      <h3>Rule</h3>
+      <p>Track cash first. Then build assets. Then stop being stupid with leverage.</p>
+      <button class="btn btn-primary" id="openAddAccountSidebar" type="button">Add account</button>
     </div>
     <div class="sidebar-card">
       <div class="section-label">Snapshot</div>
@@ -83,18 +255,18 @@
   </aside>
   <header class="topbar">
     <div class="topbar-left">
-      <button class="btn btn-ghost mobile-toggle" id="sidebarToggle">Menu</button>
+      <button class="btn btn-ghost mobile-toggle" id="sidebarToggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">Menu</button>
       <div><h1 id="pageTitle">Budget</h1><div class="topbar-sub" id="pageSubtitle">Cash flow, burn rate, and category control.</div></div>
     </div>
     <div class="topbar-actions">
       <span class="pill" id="syncStatusPill">Demo sync active</span>
-      <button class="btn" id="simulateSyncBtn">Refresh data</button>
-      <button class="btn" id="themeToggle">Dark mode</button>
-      <button class="btn btn-primary" id="openAddAccount">Add account</button>
+      <button class="btn" id="simulateSyncBtn" type="button">Refresh data</button>
+      <button class="btn" id="themeToggle" type="button">Dark mode</button>
+      <button class="btn btn-primary" id="openAddAccount" type="button">Add account</button>
     </div>
   </header>
   <main class="main" id="main">
-    <section class="page active" id="page-budget">
+    <section class="page active" id="page-budget" aria-label="Budget">
       <div class="grid kpi-grid" id="budgetKpis"></div>
       <div class="grid two-col">
         <article class="card"><div class="card-header"><div><h2 class="card-title">Monthly cash flow</h2><div class="card-note">Income vs expenses with savings left over.</div></div><span class="pill">6 months</span></div><canvas id="cashFlowChart" height="120"></canvas></article>
@@ -102,10 +274,10 @@
       </div>
       <div class="grid two-col">
         <article class="card"><div class="card-header"><div><h2 class="card-title">Category burn</h2><div class="card-note">Anything over 85% deserves attention.</div></div></div><div class="budget-bars" id="budgetBars"></div></article>
-        <article class="card"><div class="card-header"><div><h2 class="card-title">Recent transactions</h2><div class="card-note">Use this to catch leaks, not admire noise.</div></div><button class="btn btn-ghost" id="exportTransactions">Export CSV</button></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Merchant</th><th>Category</th><th>Account</th><th>Amount</th></tr></thead><tbody id="transactionTable"></tbody></table></div></article>
+        <article class="card"><div class="card-header"><div><h2 class="card-title">Recent transactions</h2><div class="card-note">Use this to catch leaks, not admire noise.</div></div><button class="btn btn-ghost" id="exportTransactions" type="button">Export CSV</button></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Merchant</th><th>Category</th><th>Account</th><th>Amount</th></tr></thead><tbody id="transactionTable"></tbody></table></div></article>
       </div>
     </section>
-    <section class="page" id="page-investments">
+    <section class="page" id="page-investments" aria-label="Investments">
       <div class="grid kpi-grid" id="investmentKpis"></div>
       <div class="grid two-col">
         <article class="card"><div class="card-header"><div><h2 class="card-title">Portfolio trend</h2><div class="card-note">Total invested assets over time.</div></div><span class="pill">All accounts</span></div><canvas id="portfolioTrendChart" height="120"></canvas></article>
@@ -117,7 +289,7 @@
         <article class="card"><div class="card-header"><div><h2 class="card-title">Contribution runway</h2><div class="card-note">Consistency matters more than cleverness.</div></div></div><div class="stack" id="contributionTargets"></div></article>
       </div>
     </section>
-    <section class="page" id="page-networth">
+    <section class="page" id="page-networth" aria-label="Net worth">
       <div class="grid kpi-grid" id="networthKpis"></div>
       <div class="grid two-col">
         <article class="card"><div class="card-header"><div><h2 class="card-title">Net worth trend</h2><div class="card-note">Assets up, liabilities down. That is the game.</div></div></div><canvas id="netWorthChart" height="120"></canvas></article>
@@ -128,9 +300,9 @@
         <article class="card"><div class="card-header"><div><h2 class="card-title">Blunt insights</h2><div class="card-note">The dashboard should force decisions.</div></div></div><div class="insight-list" id="insightList"></div></article>
       </div>
     </section>
-    <section class="page" id="page-accounts">
+    <section class="page" id="page-accounts" aria-label="Accounts">
       <div class="grid two-col">
-        <article class="card"><div class="card-header"><div><h2 class="card-title">Account roster</h2><div class="card-note">All accounts in one place, including crypto.</div></div><button class="btn btn-primary" id="openAddAccountPage">Add new</button></div><div class="account-list" id="accountList"></div></article>
+        <article class="card"><div class="card-header"><div><h2 class="card-title">Account roster</h2><div class="card-note">All accounts in one place, including crypto.</div></div><button class="btn btn-primary" id="openAddAccountPage" type="button">Add new</button></div><div class="account-list" id="accountList"></div></article>
         <article class="card"><div class="card-header"><div><h2 class="card-title">Coverage</h2><div class="card-note">What is linked, manual, or needs review.</div></div></div><div class="stack" id="coveragePanel"></div></article>
       </div>
       <div class="grid two-col">
@@ -140,30 +312,460 @@
     </section>
   </main>
 </div>
-<dialog id="accountDialog"><form class="modal" id="accountForm" method="dialog"><h2>Add account</h2><p>Add checking, savings, crypto, retirement, brokerage, credit card, loan, or anything else you want tracked.</p><div class="form-grid"><div class="field"><label for="accountName">Account name</label><input id="accountName" name="accountName" placeholder="e.g. Fidelity Roth IRA" required></div><div class="field"><label for="institution">Institution</label><input id="institution" name="institution" placeholder="e.g. Fidelity" required></div><div class="field"><label for="type">Type</label><select id="type" name="type"><option value="checking">Checking</option><option value="savings">Savings</option><option value="investment">Investment</option><option value="retirement">Retirement</option><option value="crypto">Crypto</option><option value="credit">Credit card</option><option value="loan">Loan</option><option value="cash">Cash</option></select></div><div class="field"><label for="balance">Balance</label><input id="balance" name="balance" type="number" step="0.01" placeholder="0.00" required></div><div class="field"><label for="monthly">Monthly contribution</label><input id="monthly" name="monthly" type="number" step="0.01" placeholder="0.00"></div><div class="field"><label for="syncMode">Sync mode</label><select id="syncMode" name="syncMode"><option value="connected">Connected</option><option value="manual">Manual</option><option value="needs-review">Needs review</option></select></div><div class="field full"><label for="notes">Notes</label><input id="notes" name="notes" placeholder="Optional note, goal, or reminder"></div></div><div class="modal-actions"><button class="btn" type="button" id="cancelDialog">Cancel</button><button class="btn btn-primary" type="submit">Save account</button></div></form></dialog>
+<dialog id="accountDialog" aria-labelledby="dlgTitle">
+  <form class="modal" id="accountForm" method="dialog">
+    <h2 id="dlgTitle">Add account</h2>
+    <p>Add checking, savings, crypto, retirement, brokerage, credit card, loan, or anything else you want tracked.</p>
+    <div class="form-grid">
+      <div class="field"><label for="accountName">Account name</label><input id="accountName" name="accountName" placeholder="e.g. Fidelity Roth IRA" required autocomplete="off"></div>
+      <div class="field"><label for="institution">Institution</label><input id="institution" name="institution" placeholder="e.g. Fidelity" required autocomplete="off"></div>
+      <div class="field"><label for="acctType">Type</label><select id="acctType" name="acctType"><option value="checking">Checking</option><option value="savings">Savings</option><option value="investment">Investment</option><option value="retirement">Retirement</option><option value="crypto">Crypto</option><option value="credit">Credit card</option><option value="loan">Loan</option><option value="cash">Cash</option></select></div>
+      <div class="field"><label for="balance">Balance</label><input id="balance" name="balance" type="number" step="0.01" placeholder="0.00" required autocomplete="off"></div>
+      <div class="field"><label for="monthly">Monthly contribution</label><input id="monthly" name="monthly" type="number" step="0.01" placeholder="0.00" autocomplete="off"></div>
+      <div class="field"><label for="syncMode">Sync mode</label><select id="syncMode" name="syncMode"><option value="connected">Connected</option><option value="manual">Manual</option><option value="needs-review">Needs review</option></select></div>
+      <div class="field full"><label for="notes">Notes</label><input id="notes" name="notes" placeholder="Optional note, goal, or reminder" autocomplete="off"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" type="button" id="cancelDialog">Cancel</button>
+      <button class="btn btn-primary" type="submit">Save account</button>
+    </div>
+  </form>
+</dialog>
 <script>
-const state={theme:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light',page:'budget',lastSync:new Date(),accounts:[{id:1,name:'Primary Checking',institution:'Bank of America',type:'checking',balance:2450,monthly:0,sync:'connected',note:'Bills and income flow',holdings:[{name:'Cash',ticker:'USD',value:2450,allocation:100,price:1,change:0}]},{id:2,name:'Emergency Savings',institution:'Ally',type:'savings',balance:6200,monthly:250,sync:'connected',note:'Buffer before investing harder',holdings:[{name:'Cash',ticker:'USD',value:6200,allocation:100,price:1,change:0}]},{id:3,name:'Work 401(k)',institution:'Fidelity',type:'retirement',balance:18250,monthly:450,sync:'manual',note:'Long-term core retirement',holdings:[{name:'S&P 500 Index Fund',ticker:'FXAIX',value:9870,allocation:54,price:175.42,change:6.8},{name:'Bond Index Fund',ticker:'FXNAX',value:5380,allocation:29,price:10.34,change:1.6},{name:'International Index',ticker:'FSPSX',value:3000,allocation:17,price:41.28,change:4.2}]},{id:4,name:'Robinhood Taxable',institution:'Robinhood',type:'investment',balance:2380,monthly:80,sync:'connected',note:'ETF-focused taxable investing',holdings:[{name:'QQQM',ticker:'QQQM',value:920,allocation:39,price:210.10,change:8.9},{name:'SCHD',ticker:'SCHD',value:690,allocation:29,price:79.80,change:4.6},{name:'BRK.B',ticker:'BRK.B',value:770,allocation:32,price:424.10,change:6.2}]},{id:5,name:'Bitcoin Wallet',institution:'Coinbase',type:'crypto',balance:1840,monthly:60,sync:'connected',note:'High-volatility crypto sleeve',holdings:[{name:'Bitcoin',ticker:'BTC',value:1320,allocation:72,price:66890,change:11.4},{name:'Ethereum',ticker:'ETH',value:520,allocation:28,price:3480,change:8.2}]},{id:6,name:'Credit Card',institution:'Capital One',type:'credit',balance:-740,monthly:-120,sync:'connected',note:'Short-term liability, kill it monthly',holdings:[{name:'Balance',ticker:'CARD',value:-740,allocation:100,price:0,change:0}]}],cashflow:{income:4850,fixed:2050,variable:1125,investing:530,debt:120,months:['Jan','Feb','Mar','Apr','May','Jun'],incomeSeries:[4680,4780,4820,4850,4850,4850],expenseSeries:[3320,3180,3360,3510,3595,3295]},categories:[{name:'Housing',spent:1450,budget:1500,color:'#01696f'},{name:'Food',spent:460,budget:500,color:'#006494'},{name:'Transport',spent:230,budget:320,color:'#437a22'},{name:'Fun',spent:170,budget:180,color:'#d19900'},{name:'Utilities',spent:205,budget:240,color:'#964219'},{name:'Shopping',spent:155,budget:140,color:'#a12c7b'}],transactions:[{date:'2026-06-16',merchant:'Trader Joe\'s',category:'Food',account:'Primary Checking',amount:-84.17},{date:'2026-06-15',merchant:'Payroll Deposit',category:'Income',account:'Primary Checking',amount:2425},{date:'2026-06-14',merchant:'Shell',category:'Transport',account:'Credit Card',amount:-46.32},{date:'2026-06-14',merchant:'Robinhood Transfer',category:'Investing',account:'Primary Checking',amount:-20},{date:'2026-06-13',merchant:'NV Energy',category:'Utilities',account:'Primary Checking',amount:-94.10},{date:'2026-06-12',merchant:'Amazon',category:'Shopping',account:'Credit Card',amount:-37.25},{date:'2026-06-11',merchant:'Rent',category:'Housing',account:'Primary Checking',amount:-1450},{date:'2026-06-10',merchant:'Interest',category:'Savings',account:'Emergency Savings',amount:18.62}],portfolioHistory:[20300,20850,21420,22080,22850,23650],netWorthHistory:[21300,22510,23740,24860,26220,28540],holdings:[{name:'S&P 500 ETF',ticker:'VOO',value:7420,change:7.4,account:'401(k)'},{name:'Nasdaq 100 ETF',ticker:'QQQM',value:3850,change:9.1,account:'Robinhood'},{name:'Dividend ETF',ticker:'SCHD',value:2240,change:4.6,account:'Robinhood'},{name:'Berkshire Hathaway',ticker:'BRK.B',value:1710,change:6.2,account:'Robinhood'},{name:'Bond Index',ticker:'FXNAX',value:5380,change:1.8,account:'401(k)'},{name:'Bitcoin',ticker:'BTC',value:1320,change:11.4,account:'Coinbase'},{name:'Ethereum',ticker:'ETH',value:520,change:8.2,account:'Coinbase'}],goals:[{name:'Emergency fund',current:6200,target:12000,type:'safety'},{name:'Retirement next milestone',current:23650,target:25000,type:'investing'},{name:'Credit card payoff',current:740,target:0,type:'debt'}]};
-const pageMeta={budget:{title:'Budget',subtitle:'Cash flow, burn rate, and category control.'},investments:{title:'Investments',subtitle:'Allocation, performance, and contribution discipline.'},networth:{title:'Net worth',subtitle:'Assets up. Liabilities down. Progress made visible.'},accounts:{title:'Accounts',subtitle:'Everything you own and owe in one roster.'}};
-const charts={}; const fmt=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}); const fmt2=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2}); const pct=new Intl.NumberFormat('en-US',{style:'percent',maximumFractionDigits:1});
-function m(v){return fmt.format(v)} function m2(v){return fmt2.format(v)} function clamp(n,a,b){return Math.max(a,Math.min(b,n))} function assets(){return state.accounts.filter(a=>a.balance>=0).reduce((s,a)=>s+a.balance,0)} function liabs(){return Math.abs(state.accounts.filter(a=>a.balance<0).reduce((s,a)=>s+a.balance,0))} function netWorth(){return assets()-liabs()} function investTotal(){return state.accounts.filter(a=>['investment','retirement','crypto'].includes(a.type)).reduce((s,a)=>s+a.balance,0)} function emergencyMonths(){const monthlyCore=state.cashflow.fixed+state.cashflow.variable; const savings=state.accounts.filter(a=>['savings','cash'].includes(a.type)).reduce((s,a)=>s+a.balance,0); return savings/monthlyCore} function savingsRate(){return (state.cashflow.income-(state.cashflow.fixed+state.cashflow.variable+state.cashflow.debt))/state.cashflow.income}
-function setPage(page){state.page=page;document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.id===`page-${page}`));document.querySelectorAll('.nav-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.page===page));document.getElementById('pageTitle').textContent=pageMeta[page].title;document.getElementById('pageSubtitle').textContent=pageMeta[page].subtitle;if(innerWidth<=960)document.getElementById('sidebar').classList.remove('open')}
-function kpis(items,id){document.getElementById(id).innerHTML=items.map(i=>`<article class="card kpi-card"><div class="eyebrow">${i.label}</div><div class="kpi-value">${i.value}</div><div class="delta ${i.trend}">${i.delta}</div></article>`).join('')}
-function snapshot(){document.getElementById('sidebarSnapshot').innerHTML=`<div class="row"><span class="muted">Net worth</span><strong class="mono">${m(netWorth())}</strong></div><div class="row"><span class="muted">Invested</span><strong class="mono">${m(investTotal())}</strong></div><div class="row"><span class="muted">Cash reserve</span><strong class="mono">${m(state.accounts.filter(a=>['checking','savings','cash'].includes(a.type)).reduce((s,a)=>s+a.balance,0))}</strong></div><div class="row"><span class="muted">Last refresh</span><strong class="mono">${state.lastSync.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'})}</strong></div>`}
-function baseOpts(){const s=getComputedStyle(document.documentElement); return {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:s.getPropertyValue('--color-surface-2').trim(),titleColor:s.getPropertyValue('--color-text').trim(),bodyColor:s.getPropertyValue('--color-text-muted').trim(),borderColor:s.getPropertyValue('--color-border').trim(),borderWidth:1,padding:12}},scales:{x:{ticks:{color:s.getPropertyValue('--color-text-muted').trim()},grid:{display:false}},y:{ticks:{color:s.getPropertyValue('--color-text-muted').trim()},grid:{color:s.getPropertyValue('--color-border').trim()}}}}}
-function destroy(name){if(charts[name]) charts[name].destroy()}
-function renderBudget(){const monthlySpend=state.cashflow.fixed+state.cashflow.variable+state.cashflow.debt; kpis([{label:'Monthly income',value:m(state.cashflow.income),delta:'Steady payroll base',trend:'flat'},{label:'Monthly spend',value:m(monthlySpend),delta:pct.format(monthlySpend/state.cashflow.income)+' of income',trend:monthlySpend/state.cashflow.income>0.75?'down':'up'},{label:'Savings rate',value:pct.format(savingsRate()),delta:savingsRate()>=0.2?'Healthy margin':'Too thin',trend:savingsRate()>=0.2?'up':'down'},{label:'Emergency fund',value:emergencyMonths().toFixed(1)+' mo',delta:emergencyMonths()>=6?'Protected':'Still building',trend:emergencyMonths()>=6?'up':'flat'}],'budgetKpis'); document.getElementById('budgetBars').innerHTML=state.categories.map(cat=>{const p=clamp(cat.spent/cat.budget*100,0,130); const cls=p>=100?'danger':p>=85?'warn':'good'; return `<div class="bar-row"><div class="bar-meta"><span>${cat.name}</span><strong>${m(cat.spent)} / ${m(cat.budget)}</strong></div><div class="bar-track"><div class="bar-fill ${cls}" style="width:${p}%"></div></div></div>`}).join(''); document.getElementById('expenseLegend').innerHTML=state.categories.map(cat=>`<span class="legend-item"><span class="swatch" style="background:${cat.color}"></span>${cat.name}</span>`).join(''); document.getElementById('transactionTable').innerHTML=state.transactions.map(tx=>`<tr><td>${tx.date}</td><td>${tx.merchant}</td><td>${tx.category}</td><td>${tx.account}</td><td class="mono" style="color:${tx.amount<0?'var(--color-error)':'var(--color-success)'}">${m2(tx.amount)}</td></tr>`).join(''); destroy('cashFlow'); charts.cashFlow=new Chart(document.getElementById('cashFlowChart'),{type:'bar',data:{labels:state.cashflow.months,datasets:[{label:'Income',data:state.cashflow.incomeSeries,backgroundColor:'#01696f',borderRadius:8},{label:'Expenses',data:state.cashflow.expenseSeries,backgroundColor:'#006494',borderRadius:8}]},options:{...baseOpts(),plugins:{...baseOpts().plugins,legend:{display:true,labels:{color:getComputedStyle(document.documentElement).getPropertyValue('--color-text-muted').trim()}}},scales:{x:{ticks:{color:getComputedStyle(document.documentElement).getPropertyValue('--color-text-muted').trim()},grid:{display:false}},y:{ticks:{callback:v=>'$'+Number(v/1000).toFixed(1)+'k',color:getComputedStyle(document.documentElement).getPropertyValue('--color-text-muted').trim()},grid:{color:getComputedStyle(document.documentElement).getPropertyValue('--color-border').trim()}}}}); destroy('expenseMix'); charts.expenseMix=new Chart(document.getElementById('expenseMixChart'),{type:'doughnut',data:{labels:state.categories.map(c=>c.name),datasets:[{data:state.categories.map(c=>c.spent),backgroundColor:state.categories.map(c=>c.color),borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}})}
-function renderInvestments(){const inv=investTotal(); const taxable=state.accounts.filter(a=>a.type==='investment').reduce((s,a)=>s+a.balance,0); const retirement=state.accounts.filter(a=>a.type==='retirement').reduce((s,a)=>s+a.balance,0); const crypto=state.accounts.filter(a=>a.type==='crypto').reduce((s,a)=>s+a.balance,0); const monthlyInvesting=state.accounts.filter(a=>['investment','retirement','crypto'].includes(a.type)).reduce((s,a)=>s+Math.max(0,a.monthly),0); kpis([{label:'Portfolio value',value:m(inv),delta:'+6.8% trailing trend',trend:'up'},{label:'Monthly contributions',value:m(monthlyInvesting),delta:'Auto-build the habit',trend:'up'},{label:'Taxable / retirement / crypto',value:`${Math.round(taxable/inv*100)} / ${Math.round(retirement/inv*100)} / ${Math.round(crypto/inv*100)}`,delta:'Balance liquidity, shelter, and speculation',trend:'flat'},{label:'Investing mix',value:`${Math.round((state.holdings.filter(h=>h.ticker!=='BTC'&&h.ticker!=='ETH').reduce((s,h)=>s+h.value,0)/inv)*100)}%`,delta:'Avoid overlap and chase quality',trend:'flat'}],'investmentKpis'); document.getElementById('investmentAccounts').innerHTML=state.accounts.filter(a=>['investment','retirement','crypto'].includes(a.type)).map(a=>`<div class="holding-item"><div class="icon-box">${a.type==='crypto'?'₿':a.type==='retirement'?'R':'T'}</div><div><div class="holding-name">${a.name}</div><div class="holding-meta">${a.institution} · ${a.sync}</div></div><div class="holding-value">${m(a.balance)}<span>${m(Math.max(0,a.monthly))}/mo</span></div></div>`).join(''); document.getElementById('holdingsList').innerHTML=state.accounts.filter(a=>['investment','retirement','crypto'].includes(a.type)).map(a=>`<div class="card" style="padding:var(--space-4)"><div class="row" style="margin-bottom:var(--space-3)"><div><div class="holding-name">${a.name}</div><div class="holding-meta">${a.institution} · ${a.type}</div></div><span class="pill">${a.holdings.length} holdings</span></div><div class="stack">${a.holdings.map(h=>`<div class="row" style="align-items:flex-start"><div><strong>${h.ticker}</strong><div class="holding-meta">${h.name}</div></div><div class="holding-value">${m(h.value)}<span>${h.allocation}% · ${h.change>=0?'+':''}${h.change}%</span></div></div>`).join('')}</div></div>`).join(''); document.getElementById('contributionTargets').innerHTML=[{label:'1-year contribution pace',value:monthlyInvesting*12,goal:10000},{label:'Emergency savings',value:state.accounts.find(a=>a.name==='Emergency Savings')?.balance||0,goal:12000},{label:'Retirement milestone',value:retirement,goal:25000},{label:'Crypto sleeve cap',value:crypto,goal:3000}].map(i=>`<div class="metric-line"><div class="bar-meta"><span>${i.label}</span><strong>${m(i.value)} / ${m(i.goal)}</strong></div><div class="bar-track"><div class="bar-fill good" style="width:${clamp(i.value/i.goal*100,0,100)}%"></div></div></div>`).join(''); destroy('portfolioTrend'); charts.portfolioTrend=new Chart(document.getElementById('portfolioTrendChart'),{type:'line',data:{labels:state.cashflow.months,datasets:[{label:'Invested assets',data:state.portfolioHistory,borderColor:'#01696f',backgroundColor:'rgba(1,105,111,.12)',tension:.35,fill:true,pointRadius:3}]},options:baseOpts()}); const totals={}; state.holdings.forEach(h=>{const bucket=h.ticker==='BTC'||h.ticker==='ETH'?'Crypto':h.ticker==='FXNAX'?'Bonds':h.ticker==='SCHD'?'Dividend equity':h.ticker==='BRK.B'?'Stock pick':'Growth equity'; totals[bucket]=(totals[bucket]||0)+h.value}); const labels=Object.keys(totals), values=Object.values(totals), colors=['#01696f','#006494','#d19900','#a12c7b']; document.getElementById('allocationLegend').innerHTML=labels.map((l,i)=>`<span class="legend-item"><span class="swatch" style="background:${colors[i]}"></span>${l}</span>`).join(''); destroy('allocation'); charts.allocation=new Chart(document.getElementById('allocationChart'),{type:'doughnut',data:{labels,datasets:[{data:values,backgroundColor:colors,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'66%',plugins:{legend:{display:false}}}})}
-function renderNetWorth(){kpis([{label:'Net worth',value:m(netWorth()),delta:'+34% over 6 months',trend:'up'},{label:'Assets',value:m(assets()),delta:'What you own',trend:'up'},{label:'Liabilities',value:m(liabs()),delta:liabs()>1000?'Trim this faster':'Manageable drag',trend:liabs()>1000?'down':'flat'},{label:'Invested asset ratio',value:pct.format(investTotal()/assets()),delta:'Higher is good if your cash buffer is real',trend:'up'}],'networthKpis'); document.getElementById('goalList').innerHTML=state.goals.map(g=>{const p=g.target===0?clamp(100-((g.current/740)*100),0,100):clamp(g.current/g.target*100,0,100); const label=g.target===0?`${m(g.current)} left`:`${m(g.current)} / ${m(g.target)}`; return `<div class="goal-item"><div class="icon-box">${g.type==='debt'?'D':g.type==='safety'?'S':'I'}</div><div><div class="goal-name">${g.name}</div><div class="goal-meta">${g.type==='debt'?'Debt reduction target':'Long-term progress target'}</div><div class="bar-track" style="margin-top:.6rem"><div class="bar-fill ${g.type==='debt'?'warn':'good'}" style="width:${p}%"></div></div></div><div class="goal-value">${Math.round(p)}%<span>${label}</span></div></div>`}).join(''); document.getElementById('insightList').innerHTML=buildInsights().map(i=>`<div class="insight-item"><div class="icon-box">!</div><div><div class="holding-name">${i.title}</div><div class="insight-meta">${i.body}</div></div></div>`).join(''); destroy('netWorth'); charts.netWorth=new Chart(document.getElementById('netWorthChart'),{type:'line',data:{labels:state.cashflow.months,datasets:[{label:'Net worth',data:state.netWorthHistory,borderColor:'#437a22',backgroundColor:'rgba(67,122,34,.12)',tension:.35,fill:true,price:3}]},options:baseOpts()}); destroy('assetLiability'); charts.assetLiability=new Chart(document.getElementById('assetLiabilityChart'),{type:'doughnut',data:{labels:['Assets','Liabilities'],datasets:[{data:[assets(),liabs()],backgroundColor:['#01696f','#a12c7b'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{display:true,labels:{color:getComputedStyle(document.documentElement).getPropertyValue('--color-text-muted').trim()}}}}})}
-function renderAccounts(){document.getElementById('accountList').innerHTML=state.accounts.map(a=>`<details class="card" style="padding:var(--space-4)"><summary style="list-style:none;display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-3);align-items:center;cursor:pointer"><div class="icon-box">${a.type==='crypto'?'₿':a.name[0]}</div><div><div class="account-name">${a.name}</div><div class="account-meta">${a.institution} · ${a.type} · ${a.sync}${a.note?' · '+a.note:''}</div></div><div class="account-value">${m(a.balance)}<span>${a.monthly?m(a.monthly)+'/mo':'No monthly flow'}</span></div></summary><div style="margin-top:var(--space-4)"><div class="section-label">Holdings</div><div class="holdings-list">${a.holdings.map(h=>`<div class="holding-item"><div class="icon-box">${h.ticker[0]}</div><div><div class="holding-name">${h.ticker}</div><div class="holding-meta">${h.name}</div></div><div class="holding-value">${m(h.value)}<span>${h.allocation}% · ${h.price?m2(h.price):'—'} · ${h.change>=0?'+':''}${h.change}%</span></div></div>`).join('')}</div></div></details>`).join(''); const connected=state.accounts.filter(a=>a.sync==='connected').length, manual=state.accounts.filter(a=>a.sync==='manual').length, review=state.accounts.filter(a=>a.sync==='needs-review').length; document.getElementById('coveragePanel').innerHTML=`<div class="account-item"><div class="icon-box">C</div><div><div class="account-name">Connected</div><div class="account-meta">Auto-updating accounts</div></div><div class="account-value">${connected}<span>${Math.round(connected/state.accounts.length*100)}% of roster</span></div></div><div class="account-item"><div class="icon-box">M</div><div><div class="account-name">Manual</div><div class="account-meta">Needs periodic balance updates</div></div><div class="account-value">${manual}<span>Watch for stale data</span></div></div><div class="account-item"><div class="icon-box">R</div><div><div class="account-name">Review</div><div class="account-meta">Connection or category issue</div></div><div class="account-value">${review}<span>Fix these first</span></div></div>`; document.getElementById('accountActions').innerHTML=buildAccountActions().map(i=>`<div class="insight-item"><div class="icon-box">></div><div><div class="holding-name">${i.title}</div><div class="insight-meta">${i.body}</div></div></div>`).join(''); destroy('institution'); const buckets={}; state.accounts.forEach(a=>buckets[a.institution]=(buckets[a.institution]||0)+Math.abs(a.balance)); charts.institution=new Chart(document.getElementById('institutionChart'),{type:'bar',data:{labels:Object.keys(buckets),datasets:[{data:Object.values(buckets),backgroundColor:['#01696f','#006494','#437a22','#d19900','#a12c7b','#964219'],borderRadius:10}]},options:baseOpts()})}
-function buildInsights(){const s=savingsRate(), e=emergencyMonths(), l=liabs(), inv=investTotal(); return [s<0.2?{title:'Savings rate is too soft',body:'You are keeping too little margin. Cut a category or raise income.'}:{title:'Savings rate is working',body:'You have enough room to build reserves and invest without pretending every paycheck is spoken for.'},e<6?{title:'Emergency fund is not finished',body:`You have ${e.toFixed(1)} months of core expenses covered. Good start, not bulletproof.`}:{title:'Emergency fund is credible',body:`You have ${e.toFixed(1)} months of core expenses covered.`},l>500?{title:'Debt is still stealing compounding',body:`Roughly ${m(l)} is still working against you.`}:{title:'Liability drag is low',body:'You are not bleeding much to debt.'},{title:'Investment base is real',body:`${m(inv)} is deployed across taxable, retirement, and crypto. Consistency matters more than hero trades.`}]}
-function buildAccountActions(){const actions=[]; if(!state.accounts.some(a=>/roth/i.test(a.name))) actions.push({title:'Add Roth IRA when ready',body:'Separate taxable from tax-advantaged retirement tracking.'}); if(state.accounts.some(a=>a.sync==='manual')) actions.push({title:'Upgrade manual accounts',body:'Manual balances go stale fast. Link them or schedule monthly updates.'}); actions.push({title:'Add any side accounts',body:'HYSA, HSA, old 401(k), or debt balances should not live outside the system.'}); return actions}
-function renderSync(){document.getElementById('syncStatusPill').textContent=`Updated ${state.lastSync.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'})}`; document.getElementById('themeToggle').textContent=state.theme==='dark'?'Light mode':'Dark mode'}
-function renderAll(){snapshot(); renderBudget(); renderInvestments(); renderNetWorth(); renderAccounts(); renderSync()}
-function simulateRefresh(){state.lastSync=new Date(); state.accounts=state.accounts.map(a=>{let change=0; if(['investment','retirement','crypto'].includes(a.type)) change=a.balance*((Math.random()*0.03)-0.01); if(['checking','savings','cash'].includes(a.type)) change=(Math.random()*120)-40; if(['credit','loan'].includes(a.type)) change=(Math.random()*70)-25; return {...a,balance:Math.round((a.balance+change)*100)/100}}); state.portfolioHistory=state.portfolioHistory.slice(1).concat(Math.round(investTotal())); state.netWorthHistory=state.netWorthHistory.slice(1).concat(Math.round(netWorth())); renderAll()}
-function exportCSV(){const rows=[['Date','Merchant','Category','Account','Amount'],...state.transactions.map(t=>[t.date,t.merchant,t.category,t.account,t.amount])]; const csv=rows.map(r=>r.map(c=>'"'+String(c).replaceAll('"','""')+'"').join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='transactions-export.csv'; a.click(); URL.revokeObjectURL(url)}
-function openDlg(){document.getElementById('accountDialog').showModal()} function closeDlg(){document.getElementById('accountDialog').close(); document.getElementById('accountForm').reset()}
-function addAccount(e){e.preventDefault(); const fd=new FormData(e.target); let account={id:Date.now(),name:fd.get('accountName'),institution:fd.get('institution'),type:fd.get('type'),balance:Number(fd.get('balance'))||0,monthly:Number(fd.get('monthly'))||0,sync:fd.get('syncMode'),note:fd.get('notes')||'',holdings:[]}; if(['credit','loan'].includes(account.type)&&account.balance>0) account.balance*=-1; if(account.type==='crypto') account.holdings=[{name:'Bitcoin',ticker:'BTC',value:Math.max(0,account.balance*0.7),allocation:70,price:67000,change:11.4},{name:'Ethereum',ticker:'ETH',value:Math.max(0,account.balance*0.3),allocation:30,price:3500,change:8.2}]; else account.holdings=[{name:'Cash',ticker:account.type==='credit'?'CARD':'USD',value:account.balance,allocation:100,price:account.type==='credit'?0:1,change:0}]; state.accounts.unshift(account); state.lastSync=new Date(); closeDlg(); renderAll(); setPage('accounts')}
-document.getElementById('navGroup').addEventListener('click',e=>{const btn=e.target.closest('[data-page]'); if(btn) setPage(btn.dataset.page)}); document.getElementById('themeToggle').addEventListener('click',()=>{state.theme=state.theme==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme',state.theme); renderAll()}); document.getElementById('simulateSyncBtn').addEventListener('click',simulateRefresh); document.getElementById('exportTransactions').addEventListener('click',exportCSV); document.getElementById('openAddAccount').addEventListener('click',openDlg); document.getElementById('openAddAccountSidebar').addEventListener('click',openDlg); document.getElementById('openAddAccountPage').addEventListener('click',openDlg); document.getElementById('cancelDialog').addEventListener('click',closeDlg); document.getElementById('accountForm').addEventListener('submit',addAccount); document.getElementById('sidebarToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open')); addEventListener('click',e=>{if(innerWidth>960) return; const s=document.getElementById('sidebar'), t=document.getElementById('sidebarToggle'); if(!s.classList.contains('open')) return; if(!s.contains(e.target)&&!t.contains(e.target)) s.classList.remove('open')}); addEventListener('resize',()=>{if(innerWidth>960) document.getElementById('sidebar').classList.remove('open')}); renderAll(); setPage('budget');
+(function(){
+'use strict';
+var state={
+  theme:window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light',
+  page:'budget',
+  lastSync:new Date(),
+  accounts:[
+    {id:1,name:'Primary Checking',institution:'Bank of America',type:'checking',balance:2450,monthly:0,sync:'connected',note:'Bills and income flow',holdings:[{name:'Cash',ticker:'USD',value:2450,allocation:100,price:1,change:0}]},
+    {id:2,name:'Emergency Savings',institution:'Ally',type:'savings',balance:6200,monthly:250,sync:'connected',note:'Buffer before investing harder',holdings:[{name:'Cash',ticker:'USD',value:6200,allocation:100,price:1,change:0}]},
+    {id:3,name:'Work 401(k)',institution:'Fidelity',type:'retirement',balance:18250,monthly:450,sync:'manual',note:'Long-term core retirement',holdings:[{name:'S&P 500 Index Fund',ticker:'FXAIX',value:9870,allocation:54,price:175.42,change:6.8},{name:'Bond Index Fund',ticker:'FXNAX',value:5380,allocation:29,price:10.34,change:1.6},{name:'International Index',ticker:'FSPSX',value:3000,allocation:17,price:41.28,change:4.2}]},
+    {id:4,name:'Robinhood Taxable',institution:'Robinhood',type:'investment',balance:2380,monthly:80,sync:'connected',note:'ETF-focused taxable investing',holdings:[{name:'QQQM',ticker:'QQQM',value:920,allocation:39,price:210.10,change:8.9},{name:'SCHD',ticker:'SCHD',value:690,allocation:29,price:79.80,change:4.6},{name:'BRK.B',ticker:'BRK.B',value:770,allocation:32,price:424.10,change:6.2}]},
+    {id:5,name:'Bitcoin Wallet',institution:'Coinbase',type:'crypto',balance:1840,monthly:60,sync:'connected',note:'High-volatility crypto sleeve',holdings:[{name:'Bitcoin',ticker:'BTC',value:1320,allocation:72,price:66890,change:11.4},{name:'Ethereum',ticker:'ETH',value:520,allocation:28,price:3480,change:8.2}]},
+    {id:6,name:'Credit Card',institution:'Capital One',type:'credit',balance:-740,monthly:-120,sync:'connected',note:'Short-term liability, kill it monthly',holdings:[{name:'Balance',ticker:'CARD',value:-740,allocation:100,price:0,change:0}]}
+  ],
+  cashflow:{income:4850,fixed:2050,variable:1125,investing:530,debt:120,months:['Jan','Feb','Mar','Apr','May','Jun'],incomeSeries:[4680,4780,4820,4850,4850,4850],expenseSeries:[3320,3180,3360,3510,3595,3295]},
+  categories:[
+    {name:'Housing',spent:1450,budget:1500,color:'#01696f'},
+    {name:'Food',spent:460,budget:500,color:'#006494'},
+    {name:'Transport',spent:230,budget:320,color:'#437a22'},
+    {name:'Fun',spent:170,budget:180,color:'#d19900'},
+    {name:'Utilities',spent:205,budget:240,color:'#964219'},
+    {name:'Shopping',spent:155,budget:140,color:'#a12c7b'}
+  ],
+  transactions:[
+    {date:'2026-06-16',merchant:"Trader Joe's",category:'Food',account:'Primary Checking',amount:-84.17},
+    {date:'2026-06-15',merchant:'Payroll Deposit',category:'Income',account:'Primary Checking',amount:2425},
+    {date:'2026-06-14',merchant:'Shell',category:'Transport',account:'Credit Card',amount:-46.32},
+    {date:'2026-06-14',merchant:'Robinhood Transfer',category:'Investing',account:'Primary Checking',amount:-20},
+    {date:'2026-06-13',merchant:'NV Energy',category:'Utilities',account:'Primary Checking',amount:-94.10},
+    {date:'2026-06-12',merchant:'Amazon',category:'Shopping',account:'Credit Card',amount:-37.25},
+    {date:'2026-06-11',merchant:'Rent',category:'Housing',account:'Primary Checking',amount:-1450},
+    {date:'2026-06-10',merchant:'Interest',category:'Savings',account:'Emergency Savings',amount:18.62}
+  ],
+  portfolioHistory:[20300,20850,21420,22080,22850,23650],
+  netWorthHistory:[21300,22510,23740,24860,26220,28540],
+  holdings:[
+    {name:'S&P 500 ETF',ticker:'VOO',value:7420,change:7.4,account:'401(k)'},
+    {name:'Nasdaq 100 ETF',ticker:'QQQM',value:3850,change:9.1,account:'Robinhood'},
+    {name:'Dividend ETF',ticker:'SCHD',value:2240,change:4.6,account:'Robinhood'},
+    {name:'Berkshire Hathaway',ticker:'BRK.B',value:1710,change:6.2,account:'Robinhood'},
+    {name:'Bond Index',ticker:'FXNAX',value:5380,change:1.8,account:'401(k)'},
+    {name:'Bitcoin',ticker:'BTC',value:1320,change:11.4,account:'Coinbase'},
+    {name:'Ethereum',ticker:'ETH',value:520,change:8.2,account:'Coinbase'}
+  ],
+  goals:[
+    {name:'Emergency fund',current:6200,target:12000,type:'safety'},
+    {name:'Retirement next milestone',current:23650,target:25000,type:'investing'},
+    {name:'Credit card payoff',current:740,target:0,type:'debt'}
+  ]
+};
+var pageMeta={
+  budget:{title:'Budget',subtitle:'Cash flow, burn rate, and category control.'},
+  investments:{title:'Investments',subtitle:'Allocation, performance, and contribution discipline.'},
+  networth:{title:'Net worth',subtitle:'Assets up. Liabilities down. Progress made visible.'},
+  accounts:{title:'Accounts',subtitle:'Everything you own and owe in one roster.'}
+};
+var charts={};
+var fmt=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
+var fmt2=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2});
+var pct=new Intl.NumberFormat('en-US',{style:'percent',maximumFractionDigits:1});
+function m(v){return fmt.format(v);}
+function m2(v){return fmt2.format(v);}
+function clamp(n,a,b){return Math.max(a,Math.min(b,n));}
+function assets(){return state.accounts.filter(function(a){return a.balance>=0;}).reduce(function(s,a){return s+a.balance;},0);}
+function liabs(){return Math.abs(state.accounts.filter(function(a){return a.balance<0;}).reduce(function(s,a){return s+a.balance;},0));}
+function netWorth(){return assets()-liabs();}
+function investTotal(){return state.accounts.filter(function(a){return ['investment','retirement','crypto'].indexOf(a.type)>-1;}).reduce(function(s,a){return s+a.balance;},0);}
+function emergencyMonths(){var monthlyCore=state.cashflow.fixed+state.cashflow.variable;var savings=state.accounts.filter(function(a){return ['savings','cash'].indexOf(a.type)>-1;}).reduce(function(s,a){return s+a.balance;},0);return savings/monthlyCore;}
+function savingsRate(){return (state.cashflow.income-(state.cashflow.fixed+state.cashflow.variable+state.cashflow.debt))/state.cashflow.income;}
+function getCSSVar(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
+/* SIDEBAR */
+var sidebarEl=document.getElementById('sidebar');
+var overlayEl=document.getElementById('sidebarOverlay');
+var toggleBtn=document.getElementById('sidebarToggle');
+function openSidebar(){
+  sidebarEl.classList.add('open');
+  overlayEl.classList.add('visible');
+  toggleBtn.setAttribute('aria-expanded','true');
+}
+function closeSidebar(){
+  sidebarEl.classList.remove('open');
+  overlayEl.classList.remove('visible');
+  toggleBtn.setAttribute('aria-expanded','false');
+}
+function toggleSidebar(){
+  if(sidebarEl.classList.contains('open')){closeSidebar();}else{openSidebar();}
+}
+toggleBtn.addEventListener('click',function(e){
+  e.preventDefault();
+  e.stopPropagation();
+  toggleSidebar();
+});
+overlayEl.addEventListener('click',function(){
+  closeSidebar();
+});
+window.addEventListener('resize',function(){
+  if(window.innerWidth>960){closeSidebar();}
+});
+/* PAGE NAV */
+function setPage(page){
+  state.page=page;
+  document.querySelectorAll('.page').forEach(function(el){
+    el.classList.toggle('active',el.id==='page-'+page);
+  });
+  document.querySelectorAll('.nav-btn').forEach(function(btn){
+    btn.classList.toggle('active',btn.getAttribute('data-page')===page);
+  });
+  document.getElementById('pageTitle').textContent=pageMeta[page].title;
+  document.getElementById('pageSubtitle').textContent=pageMeta[page].subtitle;
+  if(window.innerWidth<=960){closeSidebar();}
+}
+document.getElementById('navGroup').addEventListener('click',function(e){
+  var btn=e.target.closest('[data-page]');
+  if(btn){setPage(btn.getAttribute('data-page'));}
+});
+/* KPI CARDS */
+function kpis(items,id){
+  document.getElementById(id).innerHTML=items.map(function(i){
+    return '<article class="card kpi-card"><div class="eyebrow">'+i.label+'</div><div class="kpi-value">'+i.value+'</div><div class="delta '+i.trend+'">'+i.delta+'</div></article>';
+  }).join('');
+}
+/* SNAPSHOT */
+function snapshot(){
+  var cash=state.accounts.filter(function(a){return ['checking','savings','cash'].indexOf(a.type)>-1;}).reduce(function(s,a){return s+a.balance;},0);
+  document.getElementById('sidebarSnapshot').innerHTML=
+    '<div class="row"><span class="muted">Net worth</span><strong class="mono">'+m(netWorth())+'</strong></div>'+
+    '<div class="row"><span class="muted">Invested</span><strong class="mono">'+m(investTotal())+'</strong></div>'+
+    '<div class="row"><span class="muted">Cash reserve</span><strong class="mono">'+m(cash)+'</strong></div>'+
+    '<div class="row"><span class="muted">Last refresh</span><strong class="mono">'+state.lastSync.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+'</strong></div>';
+}
+/* CHART BASE OPTIONS */
+function baseOpts(){
+  return {
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        backgroundColor:getCSSVar('--color-surface-2'),
+        titleColor:getCSSVar('--color-text'),
+        bodyColor:getCSSVar('--color-text-muted'),
+        borderColor:getCSSVar('--color-border'),
+        borderWidth:1,
+        padding:12
+      }
+    },
+    scales:{
+      x:{ticks:{color:getCSSVar('--color-text-muted')},grid:{display:false}},
+      y:{ticks:{color:getCSSVar('--color-text-muted')},grid:{color:getCSSVar('--color-border')}}
+    }
+  };
+}
+function destroyChart(name){if(charts[name]){charts[name].destroy();delete charts[name];}}
+/* RENDER BUDGET */
+function renderBudget(){
+  var monthlySpend=state.cashflow.fixed+state.cashflow.variable+state.cashflow.debt;
+  var spendRatio=monthlySpend/state.cashflow.income;
+  var sr=savingsRate();
+  var em=emergencyMonths();
+  kpis([
+    {label:'Monthly income',value:m(state.cashflow.income),delta:'Steady payroll base',trend:'flat'},
+    {label:'Monthly spend',value:m(monthlySpend),delta:pct.format(spendRatio)+' of income',trend:spendRatio>0.75?'down':'up'},
+    {label:'Savings rate',value:pct.format(sr),delta:sr>=0.2?'Healthy margin':'Too thin',trend:sr>=0.2?'up':'down'},
+    {label:'Emergency fund',value:em.toFixed(1)+' mo',delta:em>=6?'Protected':'Still building',trend:em>=6?'up':'flat'}
+  ],'budgetKpis');
+  document.getElementById('budgetBars').innerHTML=state.categories.map(function(cat){
+    var p=clamp(cat.spent/cat.budget*100,0,130);
+    var cls=p>=100?'danger':p>=85?'warn':'good';
+    return '<div class="bar-row"><div class="bar-meta"><span>'+cat.name+'</span><strong>'+m(cat.spent)+' / '+m(cat.budget)+'</strong></div><div class="bar-track"><div class="bar-fill '+cls+'" style="width:'+p+'%"></div></div></div>';
+  }).join('');
+  document.getElementById('expenseLegend').innerHTML=state.categories.map(function(cat){
+    return '<span class="legend-item"><span class="swatch" style="background:'+cat.color+'"></span>'+cat.name+'</span>';
+  }).join('');
+  document.getElementById('transactionTable').innerHTML=state.transactions.map(function(tx){
+    var col=tx.amount<0?'var(--color-error)':'var(--color-success)';
+    return '<tr><td>'+tx.date+'</td><td>'+tx.merchant+'</td><td>'+tx.category+'</td><td>'+tx.account+'</td><td class="mono" style="color:'+col+'">'+m2(tx.amount)+'</td></tr>';
+  }).join('');
+  destroyChart('cashFlow');
+  charts.cashFlow=new Chart(document.getElementById('cashFlowChart'),{
+    type:'bar',
+    data:{
+      labels:state.cashflow.months,
+      datasets:[
+        {label:'Income',data:state.cashflow.incomeSeries,backgroundColor:'#01696f',borderRadius:8},
+        {label:'Expenses',data:state.cashflow.expenseSeries,backgroundColor:'#006494',borderRadius:8}
+      ]
+    },
+    options:Object.assign({},baseOpts(),{
+      plugins:Object.assign({},baseOpts().plugins,{
+        legend:{display:true,labels:{color:getCSSVar('--color-text-muted')}}
+      }),
+      scales:{
+        x:{ticks:{color:getCSSVar('--color-text-muted')},grid:{display:false}},
+        y:{ticks:{callback:function(v){return '$'+Number(v/1000).toFixed(1)+'k';},color:getCSSVar('--color-text-muted')},grid:{color:getCSSVar('--color-border')}}
+      }
+    })
+  });
+  destroyChart('expenseMix');
+  charts.expenseMix=new Chart(document.getElementById('expenseMixChart'),{
+    type:'doughnut',
+    data:{labels:state.categories.map(function(c){return c.name;}),datasets:[{data:state.categories.map(function(c){return c.spent;}),backgroundColor:state.categories.map(function(c){return c.color;}),borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}
+  });
+}
+/* RENDER INVESTMENTS */
+function renderInvestments(){
+  var inv=investTotal();
+  var taxable=state.accounts.filter(function(a){return a.type==='investment';}).reduce(function(s,a){return s+a.balance;},0);
+  var retirement=state.accounts.filter(function(a){return a.type==='retirement';}).reduce(function(s,a){return s+a.balance;},0);
+  var crypto=state.accounts.filter(function(a){return a.type==='crypto';}).reduce(function(s,a){return s+a.balance;},0);
+  var monthlyInvesting=state.accounts.filter(function(a){return ['investment','retirement','crypto'].indexOf(a.type)>-1;}).reduce(function(s,a){return s+Math.max(0,a.monthly);},0);
+  var equityVal=state.holdings.filter(function(h){return h.ticker!=='BTC'&&h.ticker!=='ETH';}).reduce(function(s,h){return s+h.value;},0);
+  kpis([
+    {label:'Portfolio value',value:m(inv),delta:'+6.8% trailing trend',trend:'up'},
+    {label:'Monthly contributions',value:m(monthlyInvesting),delta:'Auto-build the habit',trend:'up'},
+    {label:'Taxable / Retirement / Crypto',value:Math.round(taxable/inv*100)+' / '+Math.round(retirement/inv*100)+' / '+Math.round(crypto/inv*100),delta:'Balance liquidity, shelter, speculation',trend:'flat'},
+    {label:'Equity mix',value:Math.round((equityVal/inv)*100)+'%',delta:'Avoid overlap and chase quality',trend:'flat'}
+  ],'investmentKpis');
+  document.getElementById('investmentAccounts').innerHTML=state.accounts.filter(function(a){return ['investment','retirement','crypto'].indexOf(a.type)>-1;}).map(function(a){
+    var icon=a.type==='crypto'?'B':a.type==='retirement'?'R':'T';
+    return '<div class="holding-item"><div class="icon-box">'+icon+'</div><div><div class="holding-name">'+a.name+'</div><div class="holding-meta">'+a.institution+' &middot; '+a.sync+'</div></div><div class="holding-value">'+m(a.balance)+'<span>'+m(Math.max(0,a.monthly))+'/mo</span></div></div>';
+  }).join('');
+  document.getElementById('holdingsList').innerHTML=state.accounts.filter(function(a){return ['investment','retirement','crypto'].indexOf(a.type)>-1;}).map(function(a){
+    var rows=a.holdings.map(function(h){
+      return '<div class="row" style="align-items:flex-start"><div><strong>'+h.ticker+'</strong><div class="holding-meta">'+h.name+'</div></div><div class="holding-value">'+m(h.value)+'<span>'+h.allocation+'% &middot; '+(h.change>=0?'+':'')+h.change+'%</span></div></div>';
+    }).join('');
+    return '<div class="card" style="padding:var(--space-4)"><div class="row" style="margin-bottom:var(--space-3)"><div><div class="holding-name">'+a.name+'</div><div class="holding-meta">'+a.institution+' &middot; '+a.type+'</div></div><span class="pill">'+a.holdings.length+' holdings</span></div><div class="stack">'+rows+'</div></div>';
+  }).join('');
+  var em=state.accounts.find(function(a){return a.name==='Emergency Savings';});
+  document.getElementById('contributionTargets').innerHTML=[
+    {label:'1-year contribution pace',value:monthlyInvesting*12,goal:10000},
+    {label:'Emergency savings',value:em?em.balance:0,goal:12000},
+    {label:'Retirement milestone',value:retirement,goal:25000},
+    {label:'Crypto sleeve cap',value:crypto,goal:3000}
+  ].map(function(i){
+    return '<div class="metric-line"><div class="bar-meta"><span>'+i.label+'</span><strong>'+m(i.value)+' / '+m(i.goal)+'</strong></div><div class="bar-track"><div class="bar-fill good" style="width:'+clamp(i.value/i.goal*100,0,100)+'%"></div></div></div>';
+  }).join('');
+  destroyChart('portfolioTrend');
+  charts.portfolioTrend=new Chart(document.getElementById('portfolioTrendChart'),{
+    type:'line',
+    data:{labels:state.cashflow.months,datasets:[{label:'Invested assets',data:state.portfolioHistory,borderColor:'#01696f',backgroundColor:'rgba(1,105,111,.12)',tension:.35,fill:true,pointRadius:3}]},
+    options:baseOpts()
+  });
+  var totals={};
+  state.holdings.forEach(function(h){
+    var bucket;
+    if(h.ticker==='BTC'||h.ticker==='ETH'){bucket='Crypto';}
+    else if(h.ticker==='FXNAX'){bucket='Bonds';}
+    else if(h.ticker==='SCHD'){bucket='Dividend equity';}
+    else if(h.ticker==='BRK.B'){bucket='Stock pick';}
+    else{bucket='Growth equity';}
+    totals[bucket]=(totals[bucket]||0)+h.value;
+  });
+  var allLabels=Object.keys(totals);
+  var allValues=Object.values(totals);
+  var allColors=['#01696f','#006494','#d19900','#a12c7b','#437a22'];
+  document.getElementById('allocationLegend').innerHTML=allLabels.map(function(l,i){
+    return '<span class="legend-item"><span class="swatch" style="background:'+allColors[i]+'"></span>'+l+'</span>';
+  }).join('');
+  destroyChart('allocation');
+  charts.allocation=new Chart(document.getElementById('allocationChart'),{
+    type:'doughnut',
+    data:{labels:allLabels,datasets:[{data:allValues,backgroundColor:allColors,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'66%',plugins:{legend:{display:false}}}
+  });
+}
+/* RENDER NET WORTH */
+function renderNetWorth(){
+  var a=assets(),l=liabs(),nw=netWorth(),inv=investTotal();
+  kpis([
+    {label:'Net worth',value:m(nw),delta:'+34% over 6 months',trend:'up'},
+    {label:'Assets',value:m(a),delta:'What you own',trend:'up'},
+    {label:'Liabilities',value:m(l),delta:l>1000?'Trim this faster':'Manageable drag',trend:l>1000?'down':'flat'},
+    {label:'Invested asset ratio',value:pct.format(inv/a),delta:'Higher is good if cash buffer is real',trend:'up'}
+  ],'networthKpis');
+  document.getElementById('goalList').innerHTML=state.goals.map(function(g){
+    var p=g.target===0?clamp(100-((g.current/740)*100),0,100):clamp(g.current/g.target*100,0,100);
+    var label=g.target===0?m(g.current)+' left':m(g.current)+' / '+m(g.target);
+    return '<div class="goal-item"><div class="icon-box">'+(g.type==='debt'?'D':g.type==='safety'?'S':'I')+'</div><div><div class="goal-name">'+g.name+'</div><div class="goal-meta">'+(g.type==='debt'?'Debt reduction target':'Long-term progress target')+'</div><div class="bar-track" style="margin-top:.6rem"><div class="bar-fill '+(g.type==='debt'?'warn':'good')+'" style="width:'+p+'%"></div></div></div><div class="goal-value">'+Math.round(p)+'%<span>'+label+'</span></div></div>';
+  }).join('');
+  document.getElementById('insightList').innerHTML=buildInsights().map(function(i){
+    return '<div class="insight-item"><div class="icon-box">!</div><div><div class="holding-name">'+i.title+'</div><div class="insight-meta">'+i.body+'</div></div></div>';
+  }).join('');
+  destroyChart('netWorth');
+  charts.netWorth=new Chart(document.getElementById('netWorthChart'),{
+    type:'line',
+    data:{labels:state.cashflow.months,datasets:[{label:'Net worth',data:state.netWorthHistory,borderColor:'#437a22',backgroundColor:'rgba(67,122,34,.12)',tension:.35,fill:true,pointRadius:3}]},
+    options:baseOpts()
+  });
+  destroyChart('assetLiability');
+  charts.assetLiability=new Chart(document.getElementById('assetLiabilityChart'),{
+    type:'doughnut',
+    data:{labels:['Assets','Liabilities'],datasets:[{data:[a,l],backgroundColor:['#01696f','#a12c7b'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{display:true,labels:{color:getCSSVar('--color-text-muted')}}}}
+  });
+}
+/* RENDER ACCOUNTS */
+function renderAccounts(){
+  document.getElementById('accountList').innerHTML=state.accounts.map(function(a){
+    var icon=a.type==='crypto'?'B':a.name[0];
+    var holdingRows=a.holdings.map(function(h){
+      return '<div class="holding-item"><div class="icon-box">'+h.ticker[0]+'</div><div><div class="holding-name">'+h.ticker+'</div><div class="holding-meta">'+h.name+'</div></div><div class="holding-value">'+m(h.value)+'<span>'+h.allocation+'% &middot; '+(h.price?m2(h.price):'&mdash;')+' &middot; '+(h.change>=0?'+':'')+h.change+'%</span></div></div>';
+    }).join('');
+    return '<details class="card" style="padding:var(--space-4)"><summary><div class="icon-box">'+icon+'</div><div><div class="account-name">'+a.name+'</div><div class="account-meta">'+a.institution+' &middot; '+a.type+' &middot; '+a.sync+(a.note?' &middot; '+a.note:'')+'</div></div><div class="account-value">'+m(a.balance)+'<span>'+(a.monthly?m(a.monthly)+'/mo':'No monthly flow')+'</span></div></summary><div style="margin-top:var(--space-4)"><div class="section-label">Holdings</div><div class="holdings-list">'+holdingRows+'</div></div></details>';
+  }).join('');
+  var connected=state.accounts.filter(function(a){return a.sync==='connected';}).length;
+  var manual=state.accounts.filter(function(a){return a.sync==='manual';}).length;
+  var review=state.accounts.filter(function(a){return a.sync==='needs-review';}).length;
+  document.getElementById('coveragePanel').innerHTML=
+    '<div class="account-item"><div class="icon-box">C</div><div><div class="account-name">Connected</div><div class="account-meta">Auto-updating accounts</div></div><div class="account-value">'+connected+'<span>'+Math.round(connected/state.accounts.length*100)+'% of roster</span></div></div>'+
+    '<div class="account-item"><div class="icon-box">M</div><div><div class="account-name">Manual</div><div class="account-meta">Needs periodic balance updates</div></div><div class="account-value">'+manual+'<span>Watch for stale data</span></div></div>'+
+    '<div class="account-item"><div class="icon-box">R</div><div><div class="account-name">Review</div><div class="account-meta">Connection or category issue</div></div><div class="account-value">'+review+'<span>Fix these first</span></div></div>';
+  document.getElementById('accountActions').innerHTML=buildAccountActions().map(function(i){
+    return '<div class="insight-item"><div class="icon-box">&rsaquo;</div><div><div class="holding-name">'+i.title+'</div><div class="insight-meta">'+i.body+'</div></div></div>';
+  }).join('');
+  destroyChart('institution');
+  var buckets={};
+  state.accounts.forEach(function(a){buckets[a.institution]=(buckets[a.institution]||0)+Math.abs(a.balance);});
+  charts.institution=new Chart(document.getElementById('institutionChart'),{
+    type:'bar',
+    data:{labels:Object.keys(buckets),datasets:[{data:Object.values(buckets),backgroundColor:['#01696f','#006494','#437a22','#d19900','#a12c7b','#964219'],borderRadius:10}]},
+    options:baseOpts()
+  });
+}
+/* INSIGHTS */
+function buildInsights(){
+  var s=savingsRate(),e=emergencyMonths(),l=liabs(),inv=investTotal();
+  return [
+    s<0.2?{title:'Savings rate is too soft',body:'You are keeping too little margin. Cut a category or raise income.'}:{title:'Savings rate is working',body:'You have enough room to build reserves and invest.'},
+    e<6?{title:'Emergency fund is not finished',body:'You have '+e.toFixed(1)+' months covered. Good start, not bulletproof.'}:{title:'Emergency fund is credible',body:'You have '+e.toFixed(1)+' months of core expenses covered.'},
+    l>500?{title:'Debt is still stealing compounding',body:'Roughly '+m(l)+' is working against you.'}:{title:'Liability drag is low',body:'You are not bleeding much to debt.'},
+    {title:'Investment base is real',body:m(inv)+' deployed across taxable, retirement, and crypto. Consistency beats hero trades.'}
+  ];
+}
+function buildAccountActions(){
+  var actions=[];
+  if(!state.accounts.some(function(a){return /roth/i.test(a.name);})){actions.push({title:'Add Roth IRA when ready',body:'Separate taxable from tax-advantaged retirement tracking.'});}
+  if(state.accounts.some(function(a){return a.sync==='manual';})){actions.push({title:'Upgrade manual accounts',body:'Manual balances go stale fast. Link them or schedule monthly updates.'});}
+  actions.push({title:'Add any side accounts',body:'HYSA, HSA, old 401(k), or debt balances should not live outside the system.'});
+  return actions;
+}
+/* SYNC PILL */
+function renderSync(){
+  document.getElementById('syncStatusPill').textContent='Updated '+state.lastSync.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+  document.getElementById('themeToggle').textContent=state.theme==='dark'?'Light mode':'Dark mode';
+}
+/* RENDER ALL */
+function renderAll(){
+  snapshot();
+  renderBudget();
+  renderInvestments();
+  renderNetWorth();
+  renderAccounts();
+  renderSync();
+}
+/* SIMULATE REFRESH */
+function simulateRefresh(){
+  state.lastSync=new Date();
+  state.accounts=state.accounts.map(function(a){
+    var change=0;
+    if(['investment','retirement','crypto'].indexOf(a.type)>-1){change=a.balance*((Math.random()*0.03)-0.01);}
+    else if(['checking','savings','cash'].indexOf(a.type)>-1){change=(Math.random()*120)-40;}
+    else if(['credit','loan'].indexOf(a.type)>-1){change=(Math.random()*70)-25;}
+    return Object.assign({},a,{balance:Math.round((a.balance+change)*100)/100});
+  });
+  state.portfolioHistory=state.portfolioHistory.slice(1).concat(Math.round(investTotal()));
+  state.netWorthHistory=state.netWorthHistory.slice(1).concat(Math.round(netWorth()));
+  renderAll();
+}
+/* CSV EXPORT */
+function exportCSV(){
+  var rows=[['Date','Merchant','Category','Account','Amount']];
+  state.transactions.forEach(function(t){rows.push([t.date,t.merchant,t.category,t.account,t.amount]);});
+  var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var link=document.createElement('a');
+  link.href=url;
+  link.download='transactions-export.csv';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+/* MODAL */
+function openDlg(){document.getElementById('accountDialog').showModal();}
+function closeDlg(){document.getElementById('accountDialog').close();document.getElementById('accountForm').reset();}
+function addAccount(e){
+  e.preventDefault();
+  var fd=new FormData(e.target);
+  var acct={
+    id:Date.now(),
+    name:fd.get('accountName'),
+    institution:fd.get('institution'),
+    type:fd.get('acctType'),
+    balance:Number(fd.get('balance'))||0,
+    monthly:Number(fd.get('monthly'))||0,
+    sync:fd.get('syncMode'),
+    note:fd.get('notes')||'',
+    holdings:[]
+  };
+  if(['credit','loan'].indexOf(acct.type)>-1&&acct.balance>0){acct.balance*=-1;}
+  if(acct.type==='crypto'){
+    acct.holdings=[
+      {name:'Bitcoin',ticker:'BTC',value:Math.max(0,acct.balance*0.7),allocation:70,price:67000,change:11.4},
+      {name:'Ethereum',ticker:'ETH',value:Math.max(0,acct.balance*0.3),allocation:30,price:3500,change:8.2}
+    ];
+  }else{
+    acct.holdings=[{name:'Cash',ticker:acct.type==='credit'?'CARD':'USD',value:acct.balance,allocation:100,price:acct.type==='credit'?0:1,change:0}];
+  }
+  state.accounts.unshift(acct);
+  state.lastSync=new Date();
+  closeDlg();
+  renderAll();
+  setPage('accounts');
+}
+/* WIRE UP EVENTS */
+document.getElementById('themeToggle').addEventListener('click',function(){
+  state.theme=state.theme==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',state.theme);
+  renderAll();
+});
+document.getElementById('simulateSyncBtn').addEventListener('click',simulateRefresh);
+document.getElementById('exportTransactions').addEventListener('click',exportCSV);
+document.getElementById('openAddAccount').addEventListener('click',openDlg);
+document.getElementById('openAddAccountSidebar').addEventListener('click',openDlg);
+document.getElementById('openAddAccountPage').addEventListener('click',openDlg);
+document.getElementById('cancelDialog').addEventListener('click',closeDlg);
+document.getElementById('accountForm').addEventListener('submit',addAccount);
+/* INIT */
+document.documentElement.setAttribute('data-theme',state.theme);
+renderAll();
+setPage('budget');
+})();
 </script>
 </body>
 </html>
