@@ -125,6 +125,7 @@
     .account-item,.holding-item,.goal-item,.sync-item,.insight-item{display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-3);align-items:center;padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2)}
     .icon-box{width:42px;height:42px;border-radius:12px;background:var(--color-primary-highlight);color:var(--color-primary-active);display:grid;place-items:center;font-weight:900;font-size:.85rem}
     .icon-box.loan{background:var(--color-warning-highlight);color:var(--color-warning)}
+    .icon-box.student_loan{background:var(--color-warning-highlight);color:var(--color-warning)}
     .icon-box.mortgage{background:var(--color-gold-highlight);color:var(--color-gold)}
     .icon-box.credit{background:var(--color-error-highlight);color:var(--color-error)}
     .icon-box.invest{background:var(--color-blue-highlight);color:var(--color-blue)}
@@ -133,6 +134,7 @@
     .account-value,.holding-value,.goal-value{text-align:right;font-weight:900;font-variant-numeric:tabular-nums lining-nums;font-size:var(--text-sm)}
     .account-value span,.holding-value span,.goal-value span{display:block;color:var(--color-text-muted);font-size:var(--text-xs);margin-top:.2rem;font-weight:600}
     .loan-badge{display:inline-flex;align-items:center;gap:var(--space-1);padding:.25rem .55rem;border-radius:var(--radius-full);background:var(--color-warning-highlight);color:var(--color-warning);font-size:var(--text-xs);font-weight:800;margin-top:var(--space-2)}
+    .student-loan-badge{display:inline-flex;align-items:center;gap:var(--space-1);padding:.25rem .55rem;border-radius:var(--radius-full);background:var(--color-warning-highlight);color:var(--color-warning);font-size:var(--text-xs);font-weight:800;margin-top:var(--space-2)}
     .mortgage-badge{display:inline-flex;align-items:center;gap:var(--space-1);padding:.25rem .55rem;border-radius:var(--radius-full);background:var(--color-gold-highlight);color:var(--color-gold);font-size:var(--text-xs);font-weight:800;margin-top:var(--space-2)}
     .legend{display:flex;gap:var(--space-3);flex-wrap:wrap;margin-top:var(--space-4)}
     .legend-item{display:inline-flex;align-items:center;gap:var(--space-2);color:var(--color-text-muted);font-size:var(--text-xs);font-weight:700}
@@ -192,6 +194,7 @@
         <button class="nav-btn" data-page="investments" type="button"><span class="nav-icon" aria-hidden="true">%</span><span>Investments</span></button>
         <button class="nav-btn" data-page="networth" type="button"><span class="nav-icon" aria-hidden="true">#</span><span>Net worth</span></button>
         <button class="nav-btn" data-page="accounts" type="button"><span class="nav-icon" aria-hidden="true">+</span><span>Accounts</span></button>
+        <button class="nav-btn" data-page="loans" type="button"><span class="nav-icon" aria-hidden="true">S</span><span>Student loans</span></button>
       </div>
     </nav>
     <div class="sidebar-card">
@@ -265,6 +268,30 @@
         <article class="card"><div class="card-header"><div><h2 class="card-title">Action queue</h2><div class="card-note">Add missing accounts, fix gaps, tighten the system.</div></div></div><div class="insight-list" id="accountActions"></div></article>
       </div>
     </section>
+    <!-- STUDENT LOANS -->
+    <section class="page" id="page-loans" aria-label="Student Loans">
+      <div class="grid kpi-grid" id="loanKpis"></div>
+      <div class="grid two-col">
+        <article class="card">
+          <div class="card-header"><div><h2 class="card-title">Payoff projection</h2><div class="card-note">Balances over time at current payment pace.</div></div><span class="pill">All loans</span></div>
+          <canvas id="loanPayoffChart" height="120"></canvas>
+        </article>
+        <article class="card">
+          <div class="card-header"><div><h2 class="card-title">Strategy</h2><div class="card-note">Avalanche = highest rate first. Snowball = smallest balance first.</div></div></div>
+          <div class="stack" id="loanStrategyPanel"></div>
+        </article>
+      </div>
+      <div class="grid two-col">
+        <article class="card">
+          <div class="card-header"><div><h2 class="card-title">Loan roster</h2><div class="card-note">Each loan with servicer, rate, and payoff estimate.</div></div></div>
+          <div class="account-list" id="loanRoster"></div>
+        </article>
+        <article class="card">
+          <div class="card-header"><div><h2 class="card-title">Loan insights</h2><div class="card-note">What the numbers actually mean for your money.</div></div></div>
+          <div class="insight-list" id="loanInsights"></div>
+        </article>
+      </div>
+    </section>
   </main>
 </div>
 
@@ -275,7 +302,7 @@
     <p>Add checking, savings, investment, retirement, crypto, credit card, mortgage, student loan, or any other account you want tracked.</p>
     <div class="form-grid">
       <div class="field"><label for="accountName">Account name</label><input id="accountName" name="accountName" placeholder="e.g. Primary Mortgage" required autocomplete="off"></div>
-      <div class="field"><label for="institution">Institution / Lender / Servicer</label><input id="institution" name="institution" placeholder="e.g. Wells Fargo, Mohela" required autocomplete="off"></div>
+      <div class="field"><label for="institution">Institution / Lender / Servicer</label><input id="institution" name="institution" placeholder="e.g. Wells Fargo, Mohela, AIDVANTAGE" required autocomplete="off"></div>
       <div class="field"><label for="acctType">Account type</label>
         <select id="acctType" name="acctType">
           <option value="checking">Checking</option>
@@ -309,6 +336,8 @@
           <div class="field"><label for="interestRate">Interest rate (%)</label><input id="interestRate" name="interestRate" type="number" step="0.01" min="0" max="30" placeholder="6.54" autocomplete="off"></div>
           <div class="field"><label for="minPayment">Minimum monthly payment</label><input id="minPayment" name="minPayment" type="number" step="0.01" placeholder="280.00" autocomplete="off"></div>
           <div class="field"><label for="extraPayment">Extra monthly payment</label><input id="extraPayment" name="extraPayment" type="number" step="0.01" placeholder="0.00" autocomplete="off"></div>
+          <div class="field"><label for="servicer">Loan servicer</label><input id="servicer" name="servicer" placeholder="e.g. MOHELA, Aidvantage, Nelnet" autocomplete="off"></div>
+          <div class="field"><label for="loanPurpose">Loan purpose (optional)</label><input id="loanPurpose" name="loanPurpose" placeholder="e.g. Undergrad, Grad school" autocomplete="off"></div>
           <div class="field"><label for="payoffDate">Target payoff date</label><input id="payoffDate" name="payoffDate" type="month" autocomplete="off"></div>
         </div>
       </div>
@@ -353,7 +382,8 @@ var pageMeta={
   budget:{title:'Budget',subtitle:'Cash flow, burn rate, and category control.'},
   investments:{title:'Investments',subtitle:'Allocation, performance, and contribution discipline.'},
   networth:{title:'Net worth',subtitle:'Assets up. Liabilities down. Equity counts.'},
-  accounts:{title:'Accounts',subtitle:'Everything you own and owe — real numbers only.'}
+  accounts:{title:'Accounts',subtitle:'Everything you own and owe — real numbers only.'},
+  loans:{title:'Student Loans',subtitle:'Rate, servicer, payoff date — know the exact cost of every dollar owed.'}
 };
 
 var charts={};
@@ -380,7 +410,8 @@ function assets(){return liquidAssets()+homeEquityTotal();}
 function liabs(){return Math.abs(state.accounts.filter(function(a){return a.balance<0;}).reduce(function(s,a){return s+a.balance;},0));}
 function netWorth(){return assets()-liabs();}
 function investTotal(){return state.accounts.filter(function(a){return ['investment','retirement','crypto'].indexOf(a.type)>-1;}).reduce(function(s,a){return s+a.balance;},0);}
-function studentLoanTotal(){return Math.abs(state.accounts.filter(function(a){return a.type==='student_loan';}).reduce(function(s,a){return s+a.balance;},0));}
+function studentLoans(){return state.accounts.filter(function(a){return a.type==='student_loan';});}
+function studentLoanTotal(){return Math.abs(studentLoans().reduce(function(s,a){return s+a.balance;},0));}
 function mortgageTotal(){return Math.abs(state.accounts.filter(function(a){return a.type==='mortgage';}).reduce(function(s,a){return s+a.balance;},0));}
 function mortgagePmtTotal(){return state.accounts.filter(function(a){return a.type==='mortgage';}).reduce(function(s,a){return s+(a.minPayment||0)+(a.extraPayment||0);},0);}
 function emergencyMonths(){
@@ -402,6 +433,15 @@ function monthsToStr(months){
   if(!isFinite(months)||months>600)return 'Never at current rate';
   var y=Math.floor(months/12);var mo=months%12;
   return (y?y+'y ':'')+( mo?mo+'m':'');
+}
+function totalInterestCost(balance,rate,minPmt,extra){
+  if(!rate)return 0;
+  var mr=rate/100/12;var pmt=(minPmt||0)+(extra||0);
+  var bal=balance;var interest=0;var guard=0;
+  while(bal>0&&guard<600){
+    var i=bal*mr;interest+=i;bal=bal+i-pmt;guard++;
+  }
+  return interest>0?interest:0;
 }
 function getCSSVar(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
 
@@ -481,6 +521,8 @@ form.addEventListener('submit',function(e){
     acct.interestRate=parseFloat(document.getElementById('interestRate').value)||0;
     acct.minPayment=parseFloat(document.getElementById('minPayment').value)||0;
     acct.extraPayment=parseFloat(document.getElementById('extraPayment').value)||0;
+    acct.servicer=document.getElementById('servicer').value.trim();
+    acct.loanPurpose=document.getElementById('loanPurpose').value.trim();
     acct.payoffDate=document.getElementById('payoffDate').value;
   }
   state.accounts.push(acct);
@@ -513,6 +555,7 @@ function renderAll(){
   if(p==='investments')renderInvestments();
   if(p==='networth')renderNetWorth();
   if(p==='accounts')renderAccounts();
+  if(p==='loans')renderLoans();
 }
 
 function renderSidebarSnapshot(){
@@ -555,7 +598,6 @@ function renderBudget(){
     document.getElementById('expenseLegend').innerHTML='<div class="muted" style="font-size:var(--text-xs)">Add transactions to see spending mix.</div>';
   }
 
-  /* Housing bar auto-populates with mortgage P+I */
   var bars=state.categories.map(function(c){return Object.assign({},c);});
   if(mortgagePmt>0&&bars[0].name==='Housing'){
     bars[0].spent=Math.max(bars[0].spent,mortgagePmt);
@@ -581,187 +623,218 @@ function renderInvestments(){
   var inv=investTotal();
   var inv_accts=state.accounts.filter(function(a){return ['investment','retirement','crypto'].indexOf(a.type)>-1;});
   document.getElementById('investmentKpis').innerHTML=[
-    kpiCard('Total invested',m(inv),''),
-    kpiCard('Accounts',inv_accts.length+'','Investment, retirement, crypto'),
-    kpiCard('Monthly contributions',m(inv_accts.reduce(function(s,a){return s+(a.monthly||0);},0)),''),
-    kpiCard('Largest account',inv_accts.length?m(Math.max.apply(null,inv_accts.map(function(a){return a.balance;}))):'—','')
+    kpiCard('Invested assets',m(inv),''),
+    kpiCard('Accounts',inv_accts.length+'','Brokerage, retirement, crypto'),
+    kpiCard('Home equity',m(homeEquityTotal()),''),
+    kpiCard('Net worth',m(netWorth()),'')
   ].join('');
 
   var primary=getCSSVar('--color-primary');
-  makeChart('portfolioTrendChart',{type:'line',data:{labels:state.cashflow.months,datasets:[{label:'Portfolio value',data:state.portfolioHistory,borderColor:primary,backgroundColor:primary+'22',fill:true,tension:.35,pointRadius:3}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:textColor()},grid:{color:gridColor()}},y:{ticks:{color:textColor(),callback:function(v){return '$'+v.toLocaleString();}},grid:{color:gridColor()}}}}});
+  makeChart('portfolioTrendChart',{type:'line',data:{labels:['Jan','Feb','Mar','Apr','May','Jun'],datasets:[{label:'Portfolio',data:state.portfolioHistory,borderColor:primary,backgroundColor:primary+'22',fill:true,tension:.4,pointRadius:3}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:textColor()},grid:{color:gridColor()}},y:{ticks:{color:textColor(),callback:function(v){return '$'+v.toLocaleString();}},grid:{color:gridColor()}}}}});
 
-  var tColors=[getCSSVar('--color-primary'),getCSSVar('--color-blue'),getCSSVar('--color-gold'),getCSSVar('--color-success')];
-  var allHoldings=[];
-  inv_accts.forEach(function(a){(a.holdings||[]).forEach(function(h){allHoldings.push(h);});});
-  if(allHoldings.length){
-    var groups={};
-    allHoldings.forEach(function(h){var g=h.assetClass||'stocks';groups[g]=(groups[g]||0)+Math.abs(h.value);});
-    var labels=Object.keys(groups);var data=labels.map(function(l){return groups[l];});
-    makeChart('allocationChart',{type:'doughnut',data:{labels:labels,datasets:[{data:data,backgroundColor:labels.map(function(_,i){return tColors[i%tColors.length]+'cc';}),borderWidth:0}]},options:{responsive:true,cutout:'65%',plugins:{legend:{display:false}}}});
-    document.getElementById('allocationLegend').innerHTML=labels.map(function(l,i){return '<div class="legend-item"><span class="swatch" style="background:'+tColors[i%tColors.length]+'"></span>'+l+' '+m(groups[l])+'</div>';}).join('');
+  var typeColors={'investment':getCSSVar('--color-blue'),'retirement':getCSSVar('--color-primary'),'crypto':getCSSVar('--color-gold')};
+  var groups={};inv_accts.forEach(function(a){groups[a.type]=(groups[a.type]||0)+a.balance;});
+  var gKeys=Object.keys(groups);
+  if(gKeys.length){
+    makeChart('allocationChart',{type:'doughnut',data:{labels:gKeys,datasets:[{data:gKeys.map(function(k){return groups[k];}),backgroundColor:gKeys.map(function(k){return (typeColors[k]||primary)+'cc';}),borderWidth:0}]},options:{responsive:true,cutout:'65%',plugins:{legend:{display:false}}}});
+    document.getElementById('allocationLegend').innerHTML=gKeys.map(function(k){return '<div class="legend-item"><span class="swatch" style="background:'+(typeColors[k]||primary)+'"></span>'+k+' '+m(groups[k])+'</div>';}).join('');
   }
 
   document.getElementById('investmentAccounts').innerHTML=inv_accts.length?inv_accts.map(function(a){
-    var pct=inv>0?(a.balance/inv*100).toFixed(1):0;
-    return '<div class="account-item"><div class="icon-box invest">'+a.name.charAt(0).toUpperCase()+'</div><div><div class="account-name">'+a.name+'</div><div class="account-meta">'+a.institution+' · '+pct+'% of portfolio</div></div><div class="account-value">'+m(a.balance)+'<span>+$'+((a.monthly||0).toFixed(0))+'/mo</span></div></div>';
-  }).join(''):emptyState('No investment accounts','Add an investment, retirement, or crypto account to see allocation.');
+    var pct=inv>0?((a.balance/inv)*100).toFixed(1):0;
+    return '<div class="account-item"><div class="icon-box invest">'+a.type[0].toUpperCase()+'</div><div><div class="account-name">'+a.name+'</div><div class="account-meta">'+a.institution+'</div></div><div class="account-value">'+m(a.balance)+'<span>'+pct+'% of portfolio</span></div></div>';
+  }).join(''):'<div class="empty-state"><h3>No investment accounts</h3><p>Add a brokerage, 401k, IRA, or crypto account.</p></div>';
 
-  document.getElementById('holdingsList').innerHTML=allHoldings.length?allHoldings.map(function(h){
-    var c=h.change>=0?'up':'down';
-    return '<div class="holding-item"><div class="icon-box">'+h.ticker.charAt(0)+'</div><div><div class="holding-name">'+h.name+'</div><div class="holding-meta">'+h.ticker+'</div></div><div class="holding-value">'+m(h.value)+'<span class="delta '+c+'">'+(h.change>=0?'+':'')+h.change+'%</span></div></div>';
-  }).join(''):emptyState('No holdings','Enter positions manually when adding investment accounts.');
+  document.getElementById('holdingsList').innerHTML=state.holdings.length?state.holdings.map(function(h){
+    return '<div class="holding-item"><div class="icon-box">'+h.symbol[0]+'</div><div><div class="holding-name">'+h.symbol+'</div><div class="holding-meta">'+h.shares+' shares</div></div><div class="holding-value">'+m(h.value)+'</div></div>';
+  }).join(''):'<div class="empty-state" style="padding:var(--space-8)"><h3>No holdings</h3><p>Add positions per account.</p></div>';
 
-  document.getElementById('contributionTargets').innerHTML=inv_accts.filter(function(a){return (a.monthly||0)>0;}).map(function(a){
-    return '<div class="row"><span style="font-size:var(--text-sm)">'+a.name+'</span><strong class="mono">'+m(a.monthly)+'/mo</strong></div>';
-  }).join('') || '<div class="muted" style="font-size:var(--text-sm)">Set monthly contributions when adding accounts.</div>';
+  var contribAccts=state.accounts.filter(function(a){return a.monthly>0;});
+  document.getElementById('contributionTargets').innerHTML=contribAccts.length?contribAccts.map(function(a){
+    return '<div class="row"><span style="font-size:var(--text-sm);font-weight:700">'+a.name+'</span><strong class="mono">'+m(a.monthly)+'/mo</strong></div>';
+  }).join(''):'<div class="muted" style="font-size:var(--text-sm)">Set a monthly contribution when adding accounts.</div>';
 }
 
 /* NET WORTH */
 function renderNetWorth(){
   var nw=netWorth();var a=assets();var l=liabs();
-  var equity=homeEquityTotal();var hv=homeValueTotal();var em=emergencyMonths();
-
+  var eq=homeEquityTotal();var liq=liquidAssets();var inv=investTotal();
   document.getElementById('networthKpis').innerHTML=[
     kpiCard('Net worth',m(nw),''),
-    kpiCard('Total assets',m(a),'Incl. home equity '+m(equity)),
-    kpiCard('Total liabilities',m(l),'All debt combined'),
-    kpiCard('Emergency fund',em.toFixed(1)+' mo','Target: 8–12 months')
+    kpiCard('Total assets',m(a),'Liquid + equity + invested'),
+    kpiCard('Total liabilities',m(l),'Mortgage + loans + cards'),
+    kpiCard('Student loans',m(studentLoanTotal()),'')
   ].join('');
 
-  var primary=getCSSVar('--color-primary');var blue=getCSSVar('--color-blue');
-  makeChart('netWorthChart',{type:'line',data:{labels:state.cashflow.months,datasets:[{label:'Net worth',data:state.netWorthHistory,borderColor:primary,backgroundColor:primary+'22',fill:true,tension:.35,pointRadius:3}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:textColor()},grid:{color:gridColor()}},y:{ticks:{color:textColor(),callback:function(v){return '$'+v.toLocaleString();}},grid:{color:gridColor()}}}}});
+  var primary=getCSSVar('--color-primary');
+  makeChart('netWorthChart',{type:'line',data:{labels:['Jan','Feb','Mar','Apr','May','Jun'],datasets:[{label:'Net worth',data:state.netWorthHistory,borderColor:primary,backgroundColor:primary+'22',fill:true,tension:.4,pointRadius:3}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:textColor()},grid:{color:gridColor()}},y:{ticks:{color:textColor(),callback:function(v){return '$'+v.toLocaleString();}},grid:{color:gridColor()}}}}});
 
-  /* Asset breakdown: equity + investments + liquid */
-  var assetLabels=[];var assetVals=[];var assetColors=[];
-  if(equity>0){assetLabels.push('Home equity');assetVals.push(equity);assetColors.push(getCSSVar('--color-gold'));}
-  if(investTotal()>0){assetLabels.push('Investments');assetVals.push(investTotal());assetColors.push(primary);}
-  var liquid=state.accounts.filter(function(ac){return (ac.type==='checking'||ac.type==='savings'||ac.type==='cash')&&ac.balance>0;}).reduce(function(s,ac){return s+ac.balance;},0);
-  if(liquid>0){assetLabels.push('Liquid cash');assetVals.push(liquid);assetColors.push(getCSSVar('--color-success'));}
-  if(!assetLabels.length){assetLabels=['No assets yet'];assetVals=[1];assetColors=['#ccc'];}
-  makeChart('assetLiabilityChart',{type:'doughnut',data:{labels:assetLabels,datasets:[{data:assetVals,backgroundColor:assetColors.map(function(c){return c+'cc';}),borderWidth:0}]},options:{responsive:true,cutout:'60%',plugins:{legend:{labels:{color:textColor()}}}}});
-  var legendEl=document.getElementById('assetLegend');
-  if(legendEl)legendEl.innerHTML=assetLabels.map(function(l,i){return '<div class="legend-item"><span class="swatch" style="background:'+assetColors[i]+'"></span>'+l+(assetVals[i]&&assetVals[i]!==1?' '+m(assetVals[i]):'')+'</div>';}).join('');
+  var blue=getCSSVar('--color-blue');var gold=getCSSVar('--color-gold');var err=getCSSVar('--color-error');
+  makeChart('assetLiabilityChart',{type:'doughnut',data:{labels:['Liquid','Invested','Home equity','Liabilities'],datasets:[{data:[liq,inv,eq,l],backgroundColor:[primary+'cc',blue+'cc',gold+'cc',err+'cc'],borderWidth:0}]},options:{responsive:true,cutout:'60%',plugins:{legend:{display:false}}}});
+  document.getElementById('assetLegend').innerHTML=[
+    '<div class="legend-item"><span class="swatch" style="background:'+primary+'"></span>Liquid '+m(liq)+'</div>',
+    '<div class="legend-item"><span class="swatch" style="background:'+blue+'"></span>Invested '+m(inv)+'</div>',
+    '<div class="legend-item"><span class="swatch" style="background:'+gold+'"></span>Home equity '+m(eq)+'</div>',
+    '<div class="legend-item"><span class="swatch" style="background:'+err+'"></span>Liabilities '+m(l)+'</div>'
+  ].join('');
 
-  var goals=buildGoals();
-  document.getElementById('goalList').innerHTML=goals.length?goals.map(function(g){
-    var pct=g.target>0?clamp(g.current/g.target*100,0,100):g.current>0?100:0;
-    var cls=(g.type==='debt'||g.type==='student_loan'||g.type==='mortgage')?'warn':'good';
-    var iconCls=(g.type==='debt'||g.type==='student_loan'||g.type==='mortgage')?'loan':'';
-    return '<div class="goal-item"><div class="icon-box '+iconCls+'">'+g.name.charAt(0)+'</div><div><div class="goal-name">'+g.name+'</div><div class="goal-meta">'+m(g.current)+' of '+m(g.target)+'</div><div class="bar-track" style="margin-top:6px"><div class="bar-fill '+cls+'" style="width:'+pct+'%"></div></div></div><div class="goal-value">'+pct.toFixed(0)+'%</div></div>';
-  }).join(''):emptyState('No goals yet','Add accounts to automatically build your goals.');
-
-  document.getElementById('insightList').innerHTML=buildInsights().join('');
-}
-
-function buildGoals(){
-  var goals=[];
-  var sav=state.accounts.filter(function(a){return ['savings','cash'].indexOf(a.type)>-1;}).reduce(function(s,a){return s+a.balance;},0);
-  var mc=state.cashflow.fixed+state.cashflow.variable;
-  if(sav||mc)goals.push({name:'Emergency fund',current:sav,target:mc*9||1,type:'safety'});
-  if(investTotal())goals.push({name:'Retirement milestone',current:investTotal(),target:Math.max(investTotal()*1.25,25000),type:'investing'});
-  state.accounts.filter(function(a){return a.type==='mortgage';}).forEach(function(a){
-    var hv=parseFloat(a.homeValue)||0;var owed=Math.abs(a.balance);var eq=hv>owed?hv-owed:0;
-    goals.push({name:a.name+' equity',current:eq,target:hv||owed,type:'mortgage'});
-  });
-  state.accounts.filter(function(a){return a.type==='student_loan';}).forEach(function(a){
-    goals.push({name:a.name+' payoff',current:Math.abs(a.balance),target:0,type:'student_loan'});
-  });
-  var cc=state.accounts.filter(function(a){return a.type==='credit'&&a.balance<0;});
-  if(cc.length)goals.push({name:'Credit card payoff',current:Math.abs(cc.reduce(function(s,a){return s+a.balance;},0)),target:0,type:'debt'});
-  return goals;
-}
-
-function buildInsights(){
-  var out=[];
-  if(state.accounts.length===0){out.push(insight('Start here','Add your first account — checking, savings, mortgage, or loan — to see real insights.','flat'));return out;}
   var em=emergencyMonths();
-  if(em<3)out.push(insight('Emergency fund critical','You have '+em.toFixed(1)+' months saved. Ramsey says 3–6 minimum; Orman says 8–12.','down'));
-  state.accounts.filter(function(a){return a.type==='mortgage';}).forEach(function(a){
-    var months=calcPayoffMonths(Math.abs(a.balance),a.interestRate,a.minPayment,a.extraPayment||0);
-    out.push(insight('Mortgage: '+a.name,'Balance '+m(Math.abs(a.balance))+' @ '+a.interestRate+'%. Payoff in ~'+monthsToStr(months)+'. Extra $100/mo principal saves years of interest.','flat'));
-    var hv=parseFloat(a.homeValue)||0;
-    if(hv>0){var eq=hv-Math.abs(a.balance);out.push(insight('Home equity: '+m(eq>0?eq:0),'Home value '+m(hv)+' minus mortgage '+m(Math.abs(a.balance))+'. This equity counts toward net worth.','up'));}
-    else out.push(insight('Missing home value','Add your home value to '+a.name+' so equity appears on net worth.','down'));
-  });
-  state.accounts.filter(function(a){return a.type==='student_loan';}).forEach(function(a){
-    var months=calcPayoffMonths(Math.abs(a.balance),a.interestRate,a.minPayment,a.extraPayment||0);
-    out.push(insight('Student loan: '+a.name,'Balance '+m(Math.abs(a.balance))+' @ '+a.interestRate+'%. Payoff in ~'+monthsToStr(months)+'. Extra payments attack principal directly.','down'));
-  });
-  if(out.length===0)out.push(insight('Looking good','Accounts are set up. Keep feeding real numbers and review quarterly.','up'));
-  return out;
-}
+  var goals=[
+    {name:'Emergency fund',current:em,target:6,unit:'months',fmt:function(v){return v.toFixed(1)+'mo';}},
+    {name:'Student loan payoff',current:0,target:studentLoanTotal(),unit:'paid',fmt:function(){return m(0)+' / '+m(studentLoanTotal());},pct:0},
+    {name:'Home equity',current:eq,target:homeValueTotal(),unit:'equity',fmt:function(v){return m(v);}},
+    {name:'Invested (retirement)',current:inv,target:1000000,unit:'',fmt:function(v){return m(v)+'/ '+m(1000000);}}
+  ];
+  document.getElementById('goalList').innerHTML=goals.map(function(g){
+    var pct=g.pct!==undefined?g.pct:(g.target>0?clamp(g.current/g.target*100,0,100):0);
+    var cls=pct>=100?'good':pct>=50?'':'warn';
+    return '<div class="bar-row"><div class="bar-meta"><span class="account-name">'+g.name+'</span><span>'+g.fmt(g.current)+'</span></div><div class="bar-track"><div class="bar-fill '+cls+'" style="width:'+pct+'%"></div></div></div>';
+  }).join('');
 
-function insight(title,body,type){
-  var iconCls=type==='down'||type==='flat'?'loan':'';
-  var arrow=type==='up'?'↑':type==='down'?'↓':'→';
-  return '<div class="insight-item"><div class="icon-box '+iconCls+'" style="font-size:1rem">'+arrow+'</div><div><div class="account-name">'+title+'</div><div class="account-meta" style="max-width:56ch">'+body+'</div></div></div>';
+  var insights=[];
+  if(em<3)insights.push({icon:'!',color:'error',msg:'Emergency fund below 3 months. Ramsey says 3–6 months minimum before extra debt payments.'});
+  else if(em>=6)insights.push({icon:'✓',color:'success',msg:'Emergency fund solid at '+em.toFixed(1)+' months. Build wealth now.'});
+  if(studentLoanTotal()>0){
+    var slLoans=studentLoans();
+    var highRate=slLoans.reduce(function(max,a){return a.interestRate>max?a.interestRate:max;},0);
+    if(highRate>6)insights.push({icon:'!',color:'warning',msg:'Student loan rate '+highRate+'% exceeds expected market returns. Aggressively pay this down — see the Loans page.'});
+  }
+  if(inv<l*0.5)insights.push({icon:'→',color:'primary',msg:'Liabilities exceed invested assets. Closing that gap is the single most important move.'});
+  if(!insights.length)insights.push({icon:'✓',color:'success',msg:'No critical issues detected. Keep building. Check the Loans page for rate details.'});
+  document.getElementById('insightList').innerHTML=insights.map(function(i){
+    return '<div class="insight-item"><div class="icon-box '+i.color+'" style="background:var(--color-'+i.color+'-highlight);color:var(--color-'+i.color+')">'+i.icon+'</div><div><div class="insight-meta">'+i.msg+'</div></div><div></div></div>';
+  }).join('');
 }
 
 /* ACCOUNTS */
 function renderAccounts(){
-  var list=document.getElementById('accountList');
-  list.innerHTML=state.accounts.length?state.accounts.map(function(a){
-    var iconCls=a.type==='mortgage'?'mortgage':a.type==='student_loan'||a.type==='loan'?'loan':a.type==='credit'?'credit':a.type==='investment'||a.type==='retirement'||a.type==='crypto'?'invest':'';
-    var label=a.type.replace('_',' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
-    var extra='';
-    if(a.type==='mortgage'){
-      var hv=parseFloat(a.homeValue)||0;var owed=Math.abs(a.balance);var eq=hv>owed?hv-owed:0;
-      extra='<span class="mortgage-badge">'+a.interestRate+'% · '+m(a.minPayment)+'/mo P+I'+(a.extraPayment?' + '+m(a.extraPayment)+' extra':'')+'</span>'+(hv?' <span class="pill" style="margin-top:4px;display:inline-flex">Home '+m(hv)+' · Equity '+m(eq)+'</span>':'');
-    } else if(a.type==='student_loan'||a.type==='loan'){
-      extra='<span class="loan-badge">'+a.interestRate+'% · min '+m(a.minPayment)+'/mo'+(a.extraPayment?' + '+m(a.extraPayment)+' extra':'')+'</span>';
-    }
-    return '<div class="account-item"><div class="icon-box '+iconCls+'">'+a.name.charAt(0).toUpperCase()+'</div><div><div class="account-name">'+a.name+'</div><div class="account-meta">'+a.institution+' · '+label+' · '+a.sync+'</div>'+(a.note?'<div class="account-meta">'+a.note+'</div>':'')+extra+'</div><div class="account-value">'+m(a.balance)+'<span>'+m(a.monthly||0)+'/mo</span></div></div>';
-  }).join(''):emptyState('No accounts added','Use "Add new" to add your first account — checking, savings, mortgage, loan, or investment.');
+  var accts=state.accounts;
+  document.getElementById('accountList').innerHTML=accts.length?accts.map(function(a){
+    var typeLabel={checking:'CHK',savings:'SAV',investment:'INV',retirement:'RET',crypto:'CRY',credit:'CC',mortgage:'MTG',student_loan:'SL',loan:'LN',cash:'CSH'}[a.type]||'?';
+    var typeClass={mortgage:'mortgage',student_loan:'student_loan',loan:'loan',credit:'credit',investment:'invest',retirement:'invest',crypto:'invest'}[a.type]||'';
+    var badge='';
+    if(a.type==='mortgage'&&a.interestRate)badge='<div class="mortgage-badge">'+a.interestRate+'% · '+monthsToStr(calcPayoffMonths(Math.abs(a.balance),a.interestRate,a.minPayment,a.extraPayment))+' to payoff</div>';
+    if(a.type==='student_loan'&&a.interestRate)badge='<div class="student-loan-badge">'+a.interestRate+'% · '+(a.servicer||'No servicer')+' · '+monthsToStr(calcPayoffMonths(Math.abs(a.balance),a.interestRate,a.minPayment,a.extraPayment))+' to payoff</div>';
+    if((a.type==='loan')&&a.interestRate)badge='<div class="loan-badge">'+a.interestRate+'% · '+monthsToStr(calcPayoffMonths(Math.abs(a.balance),a.interestRate,a.minPayment,a.extraPayment))+' to payoff</div>';
+    return '<div class="account-item"><div class="icon-box '+typeClass+'">'+typeLabel+'</div><div><div class="account-name">'+a.name+'</div><div class="account-meta">'+a.institution+' · '+a.sync+'</div>'+badge+'</div><div class="account-value">'+m2(a.balance)+'<span>'+a.type.replace('_',' ')+'</span></div></div>';
+  }).join(''):'<div class="empty-state"><h3>No accounts yet</h3><p>Add your first account to start tracking your full financial picture.</p><button class="btn btn-primary" onclick="document.getElementById(\'openAddAccount\').click()">Add account</button></div>';
 
-  var synced=state.accounts.filter(function(a){return a.sync==='connected';}).length;
-  var manual=state.accounts.filter(function(a){return a.sync==='manual';}).length;
-  var review=state.accounts.filter(function(a){return a.sync==='needs-review';}).length;
+  var statuses={connected:0,manual:0,'needs-review':0};
+  accts.forEach(function(a){statuses[a.sync]=(statuses[a.sync]||0)+1;});
   document.getElementById('coveragePanel').innerHTML=[
-    '<div class="row"><span class="muted">Connected</span><strong>'+synced+'</strong></div>',
-    '<div class="row"><span class="muted">Manual</span><strong>'+manual+'</strong></div>',
-    '<div class="row"><span class="muted">Needs review</span><strong>'+review+'</strong></div>',
-    '<div class="row"><span class="muted">Total accounts</span><strong>'+state.accounts.length+'</strong></div>',
-    '<div class="row"><span class="muted">Net worth</span><strong class="mono">'+m(netWorth())+'</strong></div>'
+    row2('Connected',statuses.connected),
+    row2('Manual',statuses.manual),
+    row2('Needs review',statuses['needs-review']),
+    row2('Total accounts',accts.length)
   ].join('');
 
-  var instMap={};
-  state.accounts.forEach(function(a){var k=a.institution||'Unknown';instMap[k]=(instMap[k]||0)+Math.abs(a.balance);});
-  var instLabels=Object.keys(instMap);var instVals=instLabels.map(function(k){return instMap[k];});
-  var colors=[getCSSVar('--color-primary'),getCSSVar('--color-blue'),getCSSVar('--color-gold'),getCSSVar('--color-success'),getCSSVar('--color-warning')];
-  makeChart('institutionChart',{type:'bar',data:{labels:instLabels.length?instLabels:['None'],datasets:[{data:instVals.length?instVals:[0],backgroundColor:instLabels.map(function(_,i){return colors[i%colors.length]+'cc';}),borderWidth:0,borderRadius:6}]},options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:textColor(),callback:function(v){return '$'+v.toLocaleString();}},grid:{color:gridColor()}},y:{ticks:{color:textColor()},grid:{color:'transparent'}}}}});
+  var instMap={};accts.forEach(function(a){instMap[a.institution]=(instMap[a.institution]||0)+Math.abs(a.balance);});
+  var instKeys=Object.keys(instMap);var primary=getCSSVar('--color-primary');var blue=getCSSVar('--color-blue');var gold=getCSSVar('--color-gold');
+  var colors=[primary,blue,gold,getCSSVar('--color-error'),getCSSVar('--color-success')];
+  if(instKeys.length){
+    makeChart('institutionChart',{type:'bar',data:{labels:instKeys,datasets:[{data:instKeys.map(function(k){return instMap[k];}),backgroundColor:instKeys.map(function(_,i){return colors[i%colors.length]+'cc';}),borderRadius:6,borderWidth:0}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:textColor(),callback:function(v){return '$'+v.toLocaleString();}},grid:{color:gridColor()}},y:{ticks:{color:textColor()},grid:{color:'transparent'}}}}});
+  }
 
   var actions=[];
-  if(state.accounts.length===0)actions.push(insight('Add your first account','Start with checking, savings, then mortgage or any loan you carry.','flat'));
-  if(!state.accounts.some(function(a){return a.type==='checking';}))actions.push(insight('No checking account','Add your primary checking to track income and fixed expenses.','down'));
-  if(!state.accounts.some(function(a){return a.type==='savings';}))actions.push(insight('No savings account','Emergency fund belongs in a HYSA. Add it.','flat'));
-  if(!state.accounts.some(function(a){return a.type==='retirement';}))actions.push(insight('No retirement account','Missing a 401k or IRA. Add it to track long-term wealth.','flat'));
-  if(state.accounts.some(function(a){return a.type==='mortgage'&&!(parseFloat(a.homeValue)>0);}))actions.push(insight('Mortgage missing home value','Enter your home value so equity appears on net worth.','down'));
-  if(actions.length===0)actions.push(insight('All key account types covered','Great. Keep numbers updated and review quarterly.','up'));
-  document.getElementById('accountActions').innerHTML=actions.join('');
+  if(!accts.some(function(a){return ['savings','cash'].indexOf(a.type)>-1;}))actions.push('Add a savings or HYSA account to track emergency fund.');
+  if(!accts.some(function(a){return ['investment','retirement'].indexOf(a.type)>-1;}))actions.push('No investment accounts detected. Add a 401k or brokerage.');
+  if(accts.some(function(a){return a.sync==='needs-review';}))actions.push('Some accounts need review — update credentials or check access.');
+  if(!actions.length)actions.push('All account types covered. Keep balances updated for accuracy.');
+  document.getElementById('accountActions').innerHTML=actions.map(function(msg){
+    return '<div class="insight-item"><div class="icon-box" style="background:var(--color-blue-highlight);color:var(--color-blue)">→</div><div><div class="insight-meta">'+msg+'</div></div><div></div></div>';
+  }).join('');
 }
 
-function emptyState(title,msg){return '<div class="empty-state"><h3>'+title+'</h3><p>'+msg+'</p></div>';}
+/* STUDENT LOANS */
+function renderLoans(){
+  var loans=studentLoans();
+  var totalBal=studentLoanTotal();
+  var totalMinPmt=loans.reduce(function(s,a){return s+(a.minPayment||0);},0);
+  var totalExtraPmt=loans.reduce(function(s,a){return s+(a.extraPayment||0);},0);
+  var avgRate=loans.length?loans.reduce(function(s,a){return s+(a.interestRate||0);},0)/loans.length:0;
 
-function kpiCard(label,value,note,deltaType){
-  var delta=deltaType?'<span class="delta '+deltaType+'">'+note+'</span>':'';
-  var noteHtml=!deltaType&&note?'<div class="card-note" style="margin-top:var(--space-2)">'+note+'</div>':'';
-  return '<article class="card kpi-card"><div class="eyebrow">'+label+'</div><div class="kpi-value">'+value+'</div>'+delta+noteHtml+'</article>';
+  document.getElementById('loanKpis').innerHTML=[
+    kpiCard('Total owed',m(totalBal),'Student loans only'),
+    kpiCard('Avg interest rate',avgRate.toFixed(2)+'%','Weighted across loans'),
+    kpiCard('Min monthly pmt',m(totalMinPmt),'Combined minimums'),
+    kpiCard('Extra payments',m(totalExtraPmt),totalExtraPmt>0?'↑ Accelerating payoff':'↓ None — add extra to save interest',totalExtraPmt>0?'up':'down')
+  ].join('');
+
+  /* Payoff projection chart — simple linear approximation per loan */
+  var months=['Now'];for(var mi=1;mi<=60;mi+=6)months.push('Mo '+mi);
+  var primary=getCSSVar('--color-primary');var blue=getCSSVar('--color-blue');
+  var loanColors=[primary,blue,getCSSVar('--color-gold'),getCSSVar('--color-error'),getCSSVar('--color-success')];
+  var datasets=loans.slice(0,5).map(function(loan,idx){
+    var data=[Math.abs(loan.balance)];
+    var bal=Math.abs(loan.balance);var mr=(loan.interestRate||0)/100/12;var pmt=(loan.minPayment||0)+(loan.extraPayment||0);
+    for(var step=1;step<=10;step++){
+      for(var mo=0;mo<6;mo++){if(bal<=0)break;var i=bal*mr;bal=Math.max(0,bal+i-pmt);}
+      data.push(Math.round(bal));
+    }
+    return {label:loan.name,data:data,borderColor:loanColors[idx%loanColors.length],backgroundColor:loanColors[idx%loanColors.length]+'22',fill:false,tension:.3,pointRadius:3};
+  });
+
+  if(datasets.length){
+    makeChart('loanPayoffChart',{type:'line',data:{labels:months,datasets:datasets},options:{responsive:true,plugins:{legend:{labels:{color:textColor()}}},scales:{x:{ticks:{color:textColor()},grid:{color:gridColor()}},y:{ticks:{color:textColor(),callback:function(v){return '$'+v.toLocaleString();}},grid:{color:gridColor()}}}}});
+  }
+
+  /* Strategy panel */
+  var avalanche=loans.slice().sort(function(a,b){return (b.interestRate||0)-(a.interestRate||0);});
+  var snowball=loans.slice().sort(function(a,b){return Math.abs(a.balance)-Math.abs(b.balance);});
+  var stratHtml='<div style="font-size:var(--text-sm);font-weight:800;margin-bottom:var(--space-2)">Avalanche (saves most interest)</div>';
+  stratHtml+=avalanche.slice(0,3).map(function(l,i){return '<div class="row" style="font-size:var(--text-xs)"><span>'+(i+1)+'. '+l.name+'</span><span style="color:var(--color-warning);font-weight:700">'+(l.interestRate||0)+'%</span></div>';}).join('');
+  stratHtml+='<div style="font-size:var(--text-sm);font-weight:800;margin:var(--space-4) 0 var(--space-2)">Snowball (fastest win)</div>';
+  stratHtml+=snowball.slice(0,3).map(function(l,i){return '<div class="row" style="font-size:var(--text-xs)"><span>'+(i+1)+'. '+l.name+'</span><span style="color:var(--color-primary);font-weight:700">'+m(Math.abs(l.balance))+'</span></div>';}).join('');
+  if(!loans.length)stratHtml='<div class="muted" style="font-size:var(--text-sm)">Add student loan accounts to see strategy.</div>';
+  document.getElementById('loanStrategyPanel').innerHTML=stratHtml;
+
+  /* Loan roster */
+  document.getElementById('loanRoster').innerHTML=loans.length?loans.map(function(a){
+    var payoffMo=calcPayoffMonths(Math.abs(a.balance),a.interestRate,a.minPayment,a.extraPayment);
+    var interest=totalInterestCost(Math.abs(a.balance),a.interestRate,a.minPayment,a.extraPayment);
+    return '<div class="account-item"><div class="icon-box student_loan">SL</div><div><div class="account-name">'+a.name+'</div><div class="account-meta">'+(a.servicer||'No servicer listed')+' · '+(a.loanPurpose||'')+'</div><div class="student-loan-badge">'+(a.interestRate||0)+'% · '+monthsToStr(payoffMo)+' · ~'+m(interest)+' interest</div></div><div class="account-value">'+m2(Math.abs(a.balance))+'<span>'+(a.minPayment?m(a.minPayment)+'/mo min':'No payment set')+'</span></div></div>';
+  }).join(''):'<div class="empty-state"><h3>No student loans</h3><p>Add a student loan account to track servicer, rate, and payoff date.</p><button class="btn btn-primary" onclick="document.getElementById(\'openAddAccount\').click()">Add student loan</button></div>';
+
+  /* Loan insights */
+  var lInsights=[];
+  if(!loans.length){
+    lInsights.push({icon:'→',color:'primary',msg:'No student loans added yet. Use "Add account" and select "Student loan".'});
+  } else {
+    var highestRate=avalanche[0];
+    if(highestRate&&highestRate.interestRate>6)lInsights.push({icon:'!',color:'warning',msg:'Highest rate loan: '+highestRate.name+' at '+highestRate.interestRate+'%. Avalanche method — throw every extra dollar here first.'});
+    if(totalExtraPmt===0)lInsights.push({icon:'!',color:'error',msg:'Zero extra payments across all loans. Even $50/mo extra cuts years off payoff and saves thousands in interest.'});
+    var noPmt=loans.filter(function(a){return !a.minPayment;});
+    if(noPmt.length)lInsights.push({icon:'!',color:'warning',msg:noPmt.length+' loan(s) have no payment set. Update them to get accurate projections.'});
+    var noServicer=loans.filter(function(a){return !a.servicer;});
+    if(noServicer.length)lInsights.push({icon:'→',color:'primary',msg:'Add servicer names for '+noServicer.length+' loan(s) — you need to know who to call if anything changes.'});
+    var totalInterest=loans.reduce(function(s,a){return s+totalInterestCost(Math.abs(a.balance),a.interestRate,a.minPayment,a.extraPayment);},0);
+    if(totalInterest>5000)lInsights.push({icon:'!',color:'warning',msg:'You will pay ~'+m(totalInterest)+' in total interest at current pace. Extra payments directly reduce this number.'});
+  }
+  document.getElementById('loanInsights').innerHTML=lInsights.map(function(i){
+    return '<div class="insight-item"><div class="icon-box" style="background:var(--color-'+i.color+'-highlight);color:var(--color-'+i.color+')">'+i.icon+'</div><div><div class="insight-meta">'+i.msg+'</div></div><div></div></div>';
+  }).join('');
 }
 
+/* KPI CARD */
+function kpiCard(label,value,note,delta){
+  var d=delta?'<div class="delta '+(delta==='up'?'up':'down')+'">'+(delta==='up'?'↑':'↓')+' '+note+'</div>':'';
+  var sub=(!delta&&note)?'<div class="card-note">'+note+'</div>':'';
+  return '<article class="card kpi-card"><div class="eyebrow">'+label+'</div><div class="kpi-value">'+value+'</div>'+d+sub+'</article>';
+}
+
+/* EXPORT */
 document.getElementById('exportTransactions').addEventListener('click',function(){
-  var rows=[['Date','Merchant','Category','Account','Amount']].concat(state.transactions.map(function(t){return [t.date,t.merchant,t.category,t.account,t.amount];}));
-  var csv=rows.map(function(r){return r.join(',');}).join('\n');
-  var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='transactions.csv';a.click();
+  if(!state.transactions.length)return;
+  var csv='Date,Merchant,Category,Account,Amount\n'+state.transactions.map(function(t){return [t.date,t.merchant,t.category,t.account,t.amount].join(',');}).join('\n');
+  var blob=new Blob([csv],{type:'text/csv'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='transactions.csv';a.click();
 });
 
+/* SIMULATE SYNC */
 document.getElementById('simulateSyncBtn').addEventListener('click',function(){
-  state.lastSync=new Date();updateSyncPill();renderAll();
+  state.lastSync=new Date();
+  updateSyncPill();
+  renderAll();
 });
 
-updateSyncPill();
-renderAll();
-
-})();
-</script>
-</body>
-</html>
+updateSync
