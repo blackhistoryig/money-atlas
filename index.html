@@ -247,7 +247,7 @@
       <div class="grid kpi-grid" id="networthKpis"></div>
       <div class="grid two-col">
         <article class="card"><div class="card-header"><div><h2 class="card-title">Net worth trend</h2><div class="card-note">Assets up, liabilities down. That is the game.</div></div></div><canvas id="netWorthChart" height="120"></canvas></article>
-        <article class="card"><div class="card-header"><div><h2 class="card-title">Assets vs liabilities</h2><div class="card-note">One pie you want growing on one side only.</div></div></div><canvas id="assetLiabilityChart" height="120"></canvas></article>
+        <article class="card"><div class="card-header"><div><h2 class="card-title">Asset breakdown</h2><div class="card-note">Home equity, investments, and liquid cash — separated.</div></div></div><canvas id="assetLiabilityChart" height="120"></canvas><div class="legend" id="assetLegend"></div></article>
       </div>
       <div class="grid two-col">
         <article class="card"><div class="card-header"><div><h2 class="card-title">Goal progress</h2><div class="card-note">Emergency fund, retirement, equity, and debt cleanup.</div></div></div><div class="goal-list" id="goalList"></div></article>
@@ -373,15 +373,16 @@ function homeEquityTotal(){
 function homeValueTotal(){
   return state.accounts.filter(function(a){return a.type==='mortgage';}).reduce(function(s,a){return s+(parseFloat(a.homeValue)||0);},0);
 }
-function assets(){
-  var liquid=state.accounts.filter(function(a){return a.balance>=0&&a.type!=='mortgage';}).reduce(function(s,a){return s+a.balance;},0);
-  return liquid+homeEquityTotal();
+function liquidAssets(){
+  return state.accounts.filter(function(a){return a.balance>=0&&a.type!=='mortgage';}).reduce(function(s,a){return s+a.balance;},0);
 }
+function assets(){return liquidAssets()+homeEquityTotal();}
 function liabs(){return Math.abs(state.accounts.filter(function(a){return a.balance<0;}).reduce(function(s,a){return s+a.balance;},0));}
 function netWorth(){return assets()-liabs();}
 function investTotal(){return state.accounts.filter(function(a){return ['investment','retirement','crypto'].indexOf(a.type)>-1;}).reduce(function(s,a){return s+a.balance;},0);}
 function studentLoanTotal(){return Math.abs(state.accounts.filter(function(a){return a.type==='student_loan';}).reduce(function(s,a){return s+a.balance;},0));}
 function mortgageTotal(){return Math.abs(state.accounts.filter(function(a){return a.type==='mortgage';}).reduce(function(s,a){return s+a.balance;},0));}
+function mortgagePmtTotal(){return state.accounts.filter(function(a){return a.type==='mortgage';}).reduce(function(s,a){return s+(a.minPayment||0)+(a.extraPayment||0);},0);}
 function emergencyMonths(){
   var mc=state.cashflow.fixed+state.cashflow.variable;if(!mc)return 0;
   var sav=state.accounts.filter(function(a){return ['savings','cash'].indexOf(a.type)>-1;}).reduce(function(s,a){return s+a.balance;},0);
@@ -531,7 +532,7 @@ function renderBudget(){
   var cf=state.cashflow;
   var surplus=cf.income-(cf.fixed+cf.variable+cf.investing+cf.debt);
   var sr=savingsRate();
-  var mortgagePmt=state.accounts.filter(function(a){return a.type==='mortgage';}).reduce(function(s,a){return s+(a.minPayment||0)+(a.extraPayment||0);},0);
+  var mortgagePmt=mortgagePmtTotal();
 
   document.getElementById('budgetKpis').innerHTML=[
     kpiCard('Monthly income',m(cf.income),''),
@@ -554,10 +555,11 @@ function renderBudget(){
     document.getElementById('expenseLegend').innerHTML='<div class="muted" style="font-size:var(--text-xs)">Add transactions to see spending mix.</div>';
   }
 
+  /* Housing bar auto-populates with mortgage P+I */
   var bars=state.categories.map(function(c){return Object.assign({},c);});
   if(mortgagePmt>0&&bars[0].name==='Housing'){
     bars[0].spent=Math.max(bars[0].spent,mortgagePmt);
-    if(!bars[0].budget)bars[0].budget=Math.ceil(mortgagePmt*1.05);
+    if(!bars[0].budget)bars[0].budget=Math.ceil(mortgagePmt*1.1);
   }
   var barsHtml=bars.map(function(c){
     if(!c.budget&&!c.spent)return '';
@@ -566,7 +568,7 @@ function renderBudget(){
     var label=c.name+(c.name==='Housing'&&mortgagePmt?' (incl. mortgage P+I)':'');
     return '<div class="bar-row"><div class="bar-meta"><span>'+label+'</span><span>'+m(c.spent)+' / '+m(c.budget)+'</span></div><div class="bar-track"><div class="bar-fill '+cls+'" style="width:'+pct+'%"></div></div></div>';
   }).filter(Boolean).join('');
-  document.getElementById('budgetBars').innerHTML=barsHtml||'<div class="empty-state"><h3>No budget data yet</h3><p>Add accounts and set category budgets to see burn rate.</p></div>';
+  document.getElementById('budgetBars').innerHTML=barsHtml||'<div class="empty-state"><h3>No budget data yet</h3><p>Add a mortgage or set category budgets to see burn rate.</p></div>';
 
   document.getElementById('transactionTable').innerHTML=state.transactions.length?state.transactions.map(function(t){
     var c=t.amount>=0?'color:var(--color-success)':'color:var(--color-error)';
@@ -629,13 +631,16 @@ function renderNetWorth(){
   var primary=getCSSVar('--color-primary');var blue=getCSSVar('--color-blue');
   makeChart('netWorthChart',{type:'line',data:{labels:state.cashflow.months,datasets:[{label:'Net worth',data:state.netWorthHistory,borderColor:primary,backgroundColor:primary+'22',fill:true,tension:.35,pointRadius:3}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:textColor()},grid:{color:gridColor()}},y:{ticks:{color:textColor(),callback:function(v){return '$'+v.toLocaleString();}},grid:{color:gridColor()}}}}});
 
+  /* Asset breakdown: equity + investments + liquid */
   var assetLabels=[];var assetVals=[];var assetColors=[];
   if(equity>0){assetLabels.push('Home equity');assetVals.push(equity);assetColors.push(getCSSVar('--color-gold'));}
   if(investTotal()>0){assetLabels.push('Investments');assetVals.push(investTotal());assetColors.push(primary);}
-  var liquid=state.accounts.filter(function(a){return (a.type==='checking'||a.type==='savings'||a.type==='cash')&&a.balance>0;}).reduce(function(s,a){return s+a.balance;},0);
+  var liquid=state.accounts.filter(function(ac){return (ac.type==='checking'||ac.type==='savings'||ac.type==='cash')&&ac.balance>0;}).reduce(function(s,ac){return s+ac.balance;},0);
   if(liquid>0){assetLabels.push('Liquid cash');assetVals.push(liquid);assetColors.push(getCSSVar('--color-success'));}
   if(!assetLabels.length){assetLabels=['No assets yet'];assetVals=[1];assetColors=['#ccc'];}
   makeChart('assetLiabilityChart',{type:'doughnut',data:{labels:assetLabels,datasets:[{data:assetVals,backgroundColor:assetColors.map(function(c){return c+'cc';}),borderWidth:0}]},options:{responsive:true,cutout:'60%',plugins:{legend:{labels:{color:textColor()}}}}});
+  var legendEl=document.getElementById('assetLegend');
+  if(legendEl)legendEl.innerHTML=assetLabels.map(function(l,i){return '<div class="legend-item"><span class="swatch" style="background:'+assetColors[i]+'"></span>'+l+(assetVals[i]&&assetVals[i]!==1?' '+m(assetVals[i]):'')+'</div>';}).join('');
 
   var goals=buildGoals();
   document.getElementById('goalList').innerHTML=goals.length?goals.map(function(g){
@@ -730,7 +735,7 @@ function renderAccounts(){
   if(!state.accounts.some(function(a){return a.type==='checking';}))actions.push(insight('No checking account','Add your primary checking to track income and fixed expenses.','down'));
   if(!state.accounts.some(function(a){return a.type==='savings';}))actions.push(insight('No savings account','Emergency fund belongs in a HYSA. Add it.','flat'));
   if(!state.accounts.some(function(a){return a.type==='retirement';}))actions.push(insight('No retirement account','Missing a 401k or IRA. Add it to track long-term wealth.','flat'));
-  if(state.accounts.some(function(a){return a.type==='mortgage'&&!a.homeValue;}))actions.push(insight('Mortgage missing home value','Enter your home value so equity appears on net worth.','down'));
+  if(state.accounts.some(function(a){return a.type==='mortgage'&&!(parseFloat(a.homeValue)>0);}))actions.push(insight('Mortgage missing home value','Enter your home value so equity appears on net worth.','down'));
   if(actions.length===0)actions.push(insight('All key account types covered','Great. Keep numbers updated and review quarterly.','up'));
   document.getElementById('accountActions').innerHTML=actions.join('');
 }
