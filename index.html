@@ -169,6 +169,9 @@
     .sub-holding-item{display:flex;justify-content:space-between;align-items:center;padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);background:var(--color-surface-2);margin-bottom:var(--space-2);font-size:var(--text-xs)}
     .sub-holding-name{font-weight:700;color:var(--color-text)}
     .sub-holding-val{font-weight:800;font-variant-numeric:tabular-nums}
+    /* ── Delete account button ── */
+    .btn-delete-acct{width:32px;height:32px;min-height:unset;padding:0;display:inline-grid;place-items:center;border-radius:var(--radius-md);background:transparent;border:1px solid transparent;color:var(--color-text-faint);cursor:pointer;flex-shrink:0;transition:all var(--transition)}
+    .btn-delete-acct:hover{background:var(--color-error-highlight);border-color:transparent;color:var(--color-error)}
     dialog{border:0;padding:0;width:min(580px,calc(100vw - 2rem));border-radius:var(--radius-xl);background:var(--color-surface);color:var(--color-text);box-shadow:var(--shadow-lg)}
     dialog::backdrop{background:rgba(0,0,0,.5);backdrop-filter:blur(6px)}
     .modal{padding:var(--space-6)}
@@ -237,7 +240,7 @@
         </button>
         <button class="nav-btn" data-page="loans" type="button">
           <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 3v4M8 3v4M12 12h.01"/></svg></span>
-          <span>Debt & Loans</span>
+          <span>Debt &amp; Loans</span>
         </button>
       </div>
     </nav>
@@ -426,7 +429,7 @@
       </div>
     </div>
 
-    <!-- HOLDINGS ENTRY (shown when chkHoldings is checked) -->
+    <!-- HOLDINGS ENTRY -->
     <div class="sub-account-section" id="holdingsSection">
       <div style="font-size:var(--text-xs);font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--color-text-muted);margin-bottom:var(--space-3)">
         Holdings / Sub-accounts
@@ -552,6 +555,14 @@ function typeIcon(t){return({checking:"CHK",savings:"SAV",credit:"CC",investment
 function catColor(i){return["#01696f","#006494","#d19900","#437a22","#964219","#a12c7b","#4f98a3","#7a5c00"][i%8]}
 function gc(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
 
+const TRASH='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
+
+function deleteAccount(id){
+  if(!confirm("Remove this account? This cannot be undone."))return;
+  accounts=accounts.filter(a=>a.id!==id);
+  renderPageData(currentPage);
+}
+
 const charts={};
 function makeChart(id,cfg){if(charts[id]){charts[id].destroy();delete charts[id];}const ctx=document.getElementById(id);if(!ctx)return;charts[id]=new Chart(ctx,cfg);}
 
@@ -565,8 +576,7 @@ function renderDashboard(){
   document.getElementById("kpiDebt").textContent=fmt(debt);
   document.getElementById("kpiCashflow").textContent=fmt(cf);
   document.getElementById("kpiCashflow").className="card-value "+(cf>=0?"positive":"negative");
-  const el=document.getElementById("dashAccountList");
-  el.innerHTML=accounts.map(a=>`<div class="item-row"><div class="icon-box ${a.type}">${typeIcon(a.type)}</div><div><div class="item-name">${a.name}</div><div class="item-meta">${a.institution} · ${typeLabel(a.type)}</div></div><div class="item-value ${a.balance<0?"negative":""}">${fmt(a.balance)}<span class="item-value-sub">${a.rate>0?a.rate+"% APR":a.balance<0?"Liability":"Asset"}</span></div></div>`).join("");
+  document.getElementById("dashAccountList").innerHTML=accounts.map(a=>`<div class="item-row"><div class="icon-box ${a.type}">${typeIcon(a.type)}</div><div style="flex:1;min-width:0"><div class="item-name">${a.name}</div><div class="item-meta">${a.institution} · ${typeLabel(a.type)}</div></div><div style="display:flex;align-items:center;gap:var(--space-2)"><div class="item-value ${a.balance<0?"negative":""}">${fmt(a.balance)}<span class="item-value-sub">${a.rate>0?a.rate+"% APR":a.balance<0?"Liability":"Asset"}</span></div><button class="btn-delete-acct" onclick="deleteAccount(${a.id})" aria-label="Delete ${a.name.replace(/"/g,"&quot;")}" title="Delete account">${TRASH}</button></div></div>`).join("");
   nwHistory[11].nw=nw;
   makeChart("nwChart",{type:"line",data:{labels:nwHistory.map(p=>p.label),datasets:[{label:"Net Worth",data:nwHistory.map(p=>p.nw),borderColor:gc("--color-primary"),backgroundColor:"rgba(1,105,111,.08)",fill:true,tension:.42,pointRadius:3,pointBackgroundColor:gc("--color-primary")}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:"rgba(0,0,0,.05)"},ticks:{color:gc("--color-text-muted"),font:{size:11}}},y:{grid:{color:"rgba(0,0,0,.05)"},ticks:{color:gc("--color-text-muted"),font:{size:11},callback:v=>"$"+(v/1000).toFixed(0)+"k"}}}}});
   const at=[{label:"Cash",val:getLiquid()},{label:"Investments",val:getInvTotal()}].filter(x=>x.val>0);
@@ -608,14 +618,14 @@ function renderNetWorth(){
   document.getElementById("nwDTA").textContent=assets>0?(debt/assets*100).toFixed(1)+"%":"—";
   nwHistory[11].nw=nw;
   makeChart("nwLargeChart",{type:"line",data:{labels:nwHistory.map(p=>p.label),datasets:[{label:"Net Worth",data:nwHistory.map(p=>p.nw),borderColor:gc("--color-primary"),backgroundColor:"rgba(1,105,111,.08)",fill:true,tension:.42,pointRadius:4,pointBackgroundColor:gc("--color-primary")}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:"rgba(0,0,0,.05)"},ticks:{color:gc("--color-text-muted"),font:{size:11}}},y:{grid:{color:"rgba(0,0,0,.05)"},ticks:{color:gc("--color-text-muted"),font:{size:11},callback:v=>"$"+(v/1000).toFixed(0)+"k"}}}}});
-  document.getElementById("assetBreakdown").innerHTML=accounts.filter(a=>a.balance>0).map(a=>`<div class="item-row"><div class="icon-box ${a.type}">${typeIcon(a.type)}</div><div><div class="item-name">${a.name}</div><div class="item-meta">${typeLabel(a.type)}</div></div><div class="item-value positive">${fmt(a.balance)}</div></div>`).join("");
-  document.getElementById("liabilityBreakdown").innerHTML=accounts.filter(a=>a.balance<0).map(a=>`<div class="item-row"><div class="icon-box ${a.type}">${typeIcon(a.type)}</div><div><div class="item-name">${a.name}</div><div class="item-meta">${typeLabel(a.type)}</div></div><div class="item-value negative">${fmt(a.balance)}</div></div>`).join("");
+  document.getElementById("assetBreakdown").innerHTML=accounts.filter(a=>a.balance>0).map(a=>`<div class="item-row"><div class="icon-box ${a.type}">${typeIcon(a.type)}</div><div style="flex:1;min-width:0"><div class="item-name">${a.name}</div><div class="item-meta">${typeLabel(a.type)}</div></div><div style="display:flex;align-items:center;gap:var(--space-2)"><div class="item-value positive">${fmt(a.balance)}</div><button class="btn-delete-acct" onclick="deleteAccount(${a.id})" aria-label="Delete account" title="Delete account">${TRASH}</button></div></div>`).join("");
+  document.getElementById("liabilityBreakdown").innerHTML=accounts.filter(a=>a.balance<0).map(a=>`<div class="item-row"><div class="icon-box ${a.type}">${typeIcon(a.type)}</div><div style="flex:1;min-width:0"><div class="item-name">${a.name}</div><div class="item-meta">${typeLabel(a.type)}</div></div><div style="display:flex;align-items:center;gap:var(--space-2)"><div class="item-value negative">${fmt(a.balance)}</div><button class="btn-delete-acct" onclick="deleteAccount(${a.id})" aria-label="Delete account" title="Delete account">${TRASH}</button></div></div>`).join("");
 }
 
 function accRow(a){
   const holdHTML=(a.hasHoldings&&a.subHoldings&&a.subHoldings.length)?`<div class="sub-holding-list">${a.subHoldings.map(h=>`<div class="sub-holding-item"><span class="sub-holding-name">${h.name}</span><span class="sub-holding-val ${h.value>=0?"positive":"negative"}">${fmt(h.value)}</span></div>`).join("")}</div>`:"";
   const isLiab=a.balance<0;
-  return `<div class="item-row" style="flex-wrap:wrap;margin-bottom:var(--space-2)"><div class="icon-box ${a.type}">${typeIcon(a.type)}</div><div style="flex:1;min-width:0"><div class="item-name">${a.name}</div><div class="item-meta">${a.institution} · ${typeLabel(a.type)}${a.rate>0?" · "+a.rate+"% APR":""}${a.hasHoldings?' · <span style="color:var(--color-blue);font-weight:700">Has Holdings</span>':""}</div>${a.minPay>0?`<span class="badge badge-warn">${fmt(a.minPay)}/mo min</span>`:""}</div><div class="item-value ${isLiab?"negative":""}">${fmt(a.balance)}<span class="item-value-sub">${isLiab?"Liability":"Asset"}</span></div>${holdHTML}</div>`;
+  return `<div class="item-row" style="flex-wrap:wrap;margin-bottom:var(--space-2)"><div class="icon-box ${a.type}">${typeIcon(a.type)}</div><div style="flex:1;min-width:0"><div class="item-name">${a.name}</div><div class="item-meta">${a.institution} · ${typeLabel(a.type)}${a.rate>0?" · "+a.rate+"% APR":""}${a.hasHoldings?' · <span style="color:var(--color-blue);font-weight:700">Has Holdings</span>':""}</div>${a.minPay>0?`<span class="badge badge-warn">${fmt(a.minPay)}/mo min</span>`:""}</div><div style="display:flex;align-items:center;gap:var(--space-2)"><div class="item-value ${isLiab?"negative":""}">${fmt(a.balance)}<span class="item-value-sub">${isLiab?"Liability":"Asset"}</span></div><button class="btn-delete-acct" onclick="deleteAccount(${a.id})" aria-label="Delete account" title="Delete account">${TRASH}</button></div>${holdHTML}</div>`;
 }
 
 function renderAccounts(){
@@ -659,7 +669,7 @@ function renderLoans(){
   const datasets=debts.map((d,i)=>{const rate=d.rate/100/12;let bal=Math.abs(d.balance);const data=[bal];for(let m=1;m<=36;m++){bal=Math.max(0,bal*(1+rate)-d.minPay);data.push(bal);}return{label:d.name,data,borderColor:catColor(i),backgroundColor:"transparent",tension:.4,pointRadius:0,borderWidth:2};});
   makeChart("debtChart",{type:"line",data:{labels:months.map(m=>m===0?"Now":"Mo "+m),datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{color:gc("--color-text-muted"),font:{size:10},padding:8}}},scales:{x:{ticks:{maxTicksLimit:7,color:gc("--color-text-muted"),font:{size:11}},grid:{color:"rgba(0,0,0,.05)"}},y:{ticks:{color:gc("--color-text-muted"),font:{size:11},callback:v=>"$"+(v/1000).toFixed(0)+"k"},grid:{color:"rgba(0,0,0,.05)"}}}}});
   makeChart("debtTypeChart",{type:"doughnut",data:{labels:debts.map(d=>typeLabel(d.type)),datasets:[{data:debts.map(d=>Math.abs(d.balance)),backgroundColor:debts.map((_,i)=>catColor(i)),borderWidth:0,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:"65%",plugins:{legend:{position:"bottom",labels:{color:gc("--color-text-muted"),font:{size:11},padding:12}}}}});
-  document.getElementById("loanList").innerHTML=debts.map(d=>`<div class="item-row"><div class="icon-box ${d.type}">${typeIcon(d.type)}</div><div><div class="item-name">${d.name}</div><div class="item-meta">${d.institution} · ${d.rate}% APR</div><span class="badge badge-warn">${fmt(d.minPay)}/mo min</span></div><div class="item-value negative">${fmt(d.balance)}<span class="item-value-sub">Balance</span></div></div>`).join("");
+  document.getElementById("loanList").innerHTML=debts.map(d=>`<div class="item-row"><div class="icon-box ${d.type}">${typeIcon(d.type)}</div><div style="flex:1;min-width:0"><div class="item-name">${d.name}</div><div class="item-meta">${d.institution} · ${d.rate}% APR</div><span class="badge badge-warn">${fmt(d.minPay)}/mo min</span></div><div style="display:flex;align-items:center;gap:var(--space-2)"><div class="item-value negative">${fmt(d.balance)}<span class="item-value-sub">Balance</span></div><button class="btn-delete-acct" onclick="deleteAccount(${d.id})" aria-label="Delete account" title="Delete account">${TRASH}</button></div></div>`).join("");
 }
 
 function renderPageData(id){
