@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <style>
     :root,[data-theme="light"]{
       --text-xs:clamp(0.75rem,0.7rem + 0.25vw,0.875rem);
@@ -54,170 +54,560 @@
     a{text-decoration:none;color:inherit}
     button,input,select{font:inherit;color:inherit}
     button{cursor:pointer;-webkit-tap-highlight-color:transparent}
-    .skip-link{position:absolute;left:var(--space-4);top:-100px;background:var(--color-primary);color:var(--color-text-inverse);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);z-index:200}
+    .skip-link{position:absolute;left:var(--space-4);top:-100px;background:var(--color-primary);color:#fff;padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);z-index:200}
     .skip-link:focus{top:var(--space-4)}
     .shell{display:grid;grid-template-columns:var(--sidebar-w) minmax(0,1fr);grid-template-rows:var(--header-h) minmax(0,1fr);height:100vh;height:100dvh}
-    .sidebar{grid-row:1/-1;background:linear-gradient(180deg,var(--color-surface),var(--color-surface-offset));border-right:1px solid var(--color-border);padding:var(--space-6);overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:var(--space-6);z-index:40;}
+    .sidebar{grid-row:1/-1;background:linear-gradient(180deg,var(--color-surface),var(--color-surface-offset));border-right:1px solid var(--color-border);padding:var(--space-6);overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:var(--space-6);z-index:40}
     .brand{display:flex;align-items:center;gap:var(--space-3)}
-    .brand svg{width:40px;height:40px;color:var(--color-primary)}
-    .brand-title{font-size:var(--text-sm);font-weight:900}
+    .brand svg{width:40px;height:40px;color:var(--color-primary);flex-shrink:0}
+    .brand-title{font-size:var(--text-sm);font-weight:900;line-height:1.2}
     .brand-sub{font-size:var(--text-xs);color:var(--color-text-muted)}
     .section-label{color:var(--color-text-faint);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.12em;margin-bottom:var(--space-2)}
     .nav-group{display:grid;gap:var(--space-2)}
-    .nav-btn{display:flex;align-items:center;gap:var(--space-3);width:100%;min-height:48px;padding:var(--space-3) var(--space-4);border:1px solid transparent;border-radius:var(--radius-lg);background:transparent;color:var(--color-text-muted);text-align:left;transition:all var(--transition);cursor:pointer}
+    .nav-btn{display:flex;align-items:center;gap:var(--space-3);width:100%;min-height:48px;padding:var(--space-3) var(--space-4);border:1px solid transparent;border-radius:var(--radius-lg);background:transparent;color:var(--color-text-muted);text-align:left;transition:all var(--transition);cursor:pointer;font-size:var(--text-sm);font-weight:600}
     .nav-btn:hover,.nav-btn:focus-visible{background:var(--color-surface-2);color:var(--color-text);border-color:var(--color-border);outline:none}
-    .nav-btn.active{background:var(--color-primary-highlight);color:var(--color-primary-active);border-color:transparent}
+    .nav-btn.active{background:var(--color-primary-highlight);color:var(--color-primary-active);border-color:transparent;font-weight:800}
     .nav-icon{width:18px;height:18px;display:inline-grid;place-items:center;flex-shrink:0}
-    .sidebar-card{padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-xl);background:var(--color-surface-2);box-shadow:var(--shadow-sm)}
-    .sidebar-card h3{margin:0 0 var(--space-2);font-size:var(--text-sm)}
-    .sidebar-card p{margin:0 0 var(--space-4);font-size:var(--text-xs);color:var(--color-text-muted)}
-    .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:39;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);}
+    .sidebar-tip{padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-xl);background:var(--color-surface-2);margin-top:auto}
+    .sidebar-tip h4{margin:0 0 var(--space-2);font-size:var(--text-sm);font-weight:800}
+    .sidebar-tip p{margin:0;font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.5}
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:39;backdrop-filter:blur(4px)}
     .sidebar-overlay.visible{display:block}
-    .topbar{grid-column:2;position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--color-border);background:var(--color-topbar-bg);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);}
+    .topbar{grid-column:2;display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);padding:0 var(--space-6);border-bottom:1px solid var(--color-border);background:var(--color-topbar-bg);backdrop-filter:blur(12px);z-index:20}
     .topbar-left{display:flex;align-items:center;gap:var(--space-4);min-width:0}
-    .topbar h1{margin:0;font-size:var(--text-xl);line-height:1.05;font-weight:900;letter-spacing:-.02em}
-    .topbar-sub{color:var(--color-text-muted);font-size:var(--text-sm);margin-top:var(--space-1)}
-    .topbar-actions{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap;justify-content:flex-end}
-    .main{grid-column:2;min-width:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--space-6)}
-    .page{display:none;animation:fadeIn 180ms ease}
-    .page.active{display:block}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .topbar-title{font-size:var(--text-lg);font-weight:900;letter-spacing:-.02em;margin:0}
+    .topbar-sub{color:var(--color-text-muted);font-size:var(--text-xs);margin-top:2px}
+    .topbar-actions{display:flex;align-items:center;gap:var(--space-3);flex-shrink:0}
+    .main{grid-column:2;overflow-y:auto;overscroll-behavior:contain;padding:var(--space-6)}
+    .page{display:none}
+    .page.active{display:block;animation:fadeIn 180ms ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
     .grid{display:grid;gap:var(--space-4)}
     .kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:var(--space-4)}
-    .two-col{grid-template-columns:1.3fr 1fr;margin-bottom:var(--space-4)}
-    .three-col{grid-template-columns:1.1fr 1.1fr .9fr;margin-bottom:var(--space-4)}
+    .two-col{grid-template-columns:1.4fr 1fr;margin-bottom:var(--space-4)}
+    .three-col{grid-template-columns:1fr 1fr 1fr;margin-bottom:var(--space-4)}
     .card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm);padding:var(--space-5);min-width:0}
     .card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-3);margin-bottom:var(--space-4)}
-    .card-title{margin:0;font-size:var(--text-lg);line-height:1.15;font-weight:800}
-    .card-note{color:var(--color-text-muted);font-size:var(--text-xs);margin-top:var(--space-1)}
-    .kpi-card{position:relative;overflow:hidden}
-    .kpi-card::after{content:"";position:absolute;inset:auto -18px -24px auto;width:96px;height:96px;border-radius:50%;background:var(--color-primary-faint);pointer-events:none}
-    .eyebrow{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.12em;color:var(--color-text-faint);margin-bottom:var(--space-2)}
-    .kpi-value{font-size:clamp(1.7rem,1.4rem + 1vw,2.4rem);line-height:1;font-weight:900;letter-spacing:-.03em;font-variant-numeric:tabular-nums lining-nums;margin-bottom:var(--space-2)}
-    .delta{display:inline-flex;align-items:center;gap:var(--space-2);border-radius:var(--radius-full);padding:.3rem .65rem;font-size:var(--text-xs);font-weight:700;font-variant-numeric:tabular-nums lining-nums}
+    .card-title{margin:0;font-size:var(--text-sm);font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-muted)}
+    .card-value{font-size:clamp(1.6rem,1.3rem + 1vw,2.2rem);font-weight:900;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1;margin-bottom:var(--space-2)}
+    .delta{display:inline-flex;align-items:center;gap:4px;border-radius:var(--radius-full);padding:.28rem .6rem;font-size:var(--text-xs);font-weight:800;font-variant-numeric:tabular-nums}
     .delta.up{background:var(--color-success-highlight);color:var(--color-success)}
     .delta.down{background:var(--color-error-highlight);color:var(--color-error)}
     .delta.flat{background:var(--color-blue-highlight);color:var(--color-blue)}
-    .pill{display:inline-flex;align-items:center;gap:var(--space-2);padding:.35rem .7rem;border-radius:var(--radius-full);background:var(--color-surface-offset);color:var(--color-text-muted);font-size:var(--text-xs);font-weight:700}
-    .btn{min-height:44px;border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface-2);color:var(--color-text);padding:.75rem 1rem;font-size:var(--text-sm);font-weight:700;transition:all var(--transition);cursor:pointer}
-    .btn:hover,.btn:focus-visible{transform:translateY(-1px);box-shadow:var(--shadow-sm);outline:none}
+    .delta.warn{background:var(--color-warning-highlight);color:var(--color-warning)}
+    .card-sub{color:var(--color-text-muted);font-size:var(--text-xs);margin-top:var(--space-2)}
+    .btn{min-height:44px;border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface-2);color:var(--color-text);padding:.7rem 1rem;font-size:var(--text-sm);font-weight:700;transition:all var(--transition);display:inline-flex;align-items:center;gap:var(--space-2)}
+    .btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
     .btn-primary{background:var(--color-primary);border-color:transparent;color:#fff}
-    .btn-primary:hover,.btn-primary:focus-visible{background:var(--color-primary-hover)}
-    .btn-ghost{background:transparent}
-    .stack{display:flex;flex-direction:column;gap:var(--space-3)}
-    .row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3)}
-    .muted{color:var(--color-text-muted)}
-    .mono{font-variant-numeric:tabular-nums lining-nums}
-    .budget-bars,.goal-list,.account-list,.holdings-list,.sync-list,.insight-list{display:grid;gap:var(--space-3)}
-    .bar-row{display:grid;gap:.45rem}
-    .bar-meta{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);font-size:var(--text-sm);font-variant-numeric:tabular-nums lining-nums}
-    .bar-track{height:10px;border-radius:var(--radius-full);background:var(--color-surface-offset-2);overflow:hidden}
-    .bar-fill{height:100%;border-radius:var(--radius-full);background:linear-gradient(90deg,var(--color-primary),var(--color-blue));width:0;transition:width 500ms ease}
+    .btn-primary:hover{background:var(--color-primary-hover)}
+    .btn-ghost{background:transparent;border-color:transparent}
+    .btn-sm{min-height:36px;padding:.45rem .8rem;font-size:var(--text-xs)}
+    .icon-btn{width:40px;height:40px;min-height:unset;padding:0;display:inline-grid;place-items:center;border-radius:var(--radius-lg)}
+    .bar-row{display:grid;gap:.5rem;margin-bottom:var(--space-3)}
+    .bar-meta{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);font-size:var(--text-sm);font-variant-numeric:tabular-nums}
+    .bar-name{font-weight:700}
+    .bar-track{height:9px;border-radius:var(--radius-full);background:var(--color-surface-offset-2);overflow:hidden}
+    .bar-fill{height:100%;border-radius:var(--radius-full);background:linear-gradient(90deg,var(--color-primary),var(--color-blue));width:0;transition:width 600ms ease}
     .bar-fill.warn{background:linear-gradient(90deg,var(--color-gold),var(--color-warning))}
     .bar-fill.danger{background:linear-gradient(90deg,var(--color-warning),#8f2644)}
     .bar-fill.good{background:linear-gradient(90deg,var(--color-success),var(--color-primary))}
     .table-wrap{overflow-x:auto;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2)}
-    table{width:100%;border-collapse:collapse;min-width:600px}
-    th,td{padding:.9rem 1rem;text-align:left;border-bottom:1px solid var(--color-border);font-size:var(--text-sm)}
-    th{position:sticky;top:0;background:var(--color-surface-offset);z-index:1;color:var(--color-text-muted);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em}
-    tbody tr:hover{background:var(--color-row-hover)}
+    table{width:100%;border-collapse:collapse;min-width:540px}
+    th,td{padding:.85rem 1rem;text-align:left;border-bottom:1px solid var(--color-border);font-size:var(--text-sm);font-variant-numeric:tabular-nums}
+    th{background:var(--color-surface-offset);color:var(--color-text-muted);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;font-weight:800}
     tbody tr:last-child td{border-bottom:0}
-    .account-item,.holding-item,.insight-item{display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-3);align-items:center;padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2)}
-    .icon-box{width:42px;height:42px;border-radius:12px;background:var(--color-primary-highlight);color:var(--color-primary-active);display:grid;place-items:center;font-weight:900;font-size:.85rem;flex-shrink:0}
-    .icon-box.loan,.icon-box.student_loan{background:var(--color-warning-highlight);color:var(--color-warning)}
-    .icon-box.mortgage{background:var(--color-gold-highlight);color:var(--color-gold)}
+    tbody tr:hover{background:var(--color-row-hover)}
+    .item-row{display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-3);align-items:center;padding:var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface-2);margin-bottom:var(--space-3)}
+    .icon-box{width:42px;height:42px;border-radius:12px;background:var(--color-primary-highlight);color:var(--color-primary-active);display:grid;place-items:center;font-weight:900;font-size:.8rem;flex-shrink:0}
+    .icon-box.checking,.icon-box.savings{background:var(--color-primary-highlight);color:var(--color-primary-active)}
     .icon-box.credit{background:var(--color-error-highlight);color:var(--color-error)}
-    .icon-box.invest,.icon-box.investment,.icon-box.retirement,.icon-box.crypto{background:var(--color-blue-highlight);color:var(--color-blue)}
-    .account-name,.holding-name{font-weight:800;font-size:var(--text-sm)}
-    .account-meta,.holding-meta,.insight-meta{color:var(--color-text-muted);font-size:var(--text-xs);margin-top:.2rem}
-    .account-value,.holding-value{text-align:right;font-weight:900;font-variant-numeric:tabular-nums lining-nums;font-size:var(--text-sm)}
-    .account-value span,.holding-value span{display:block;color:var(--color-text-muted);font-size:var(--text-xs);margin-top:.2rem;font-weight:600}
-    .badge{display:inline-flex;align-items:center;gap:var(--space-1);padding:.25rem .55rem;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:800;margin-top:var(--space-2)}
-    .badge-warn{background:var(--color-warning-highlight);color:var(--color-warning)}
+    .icon-box.investment,.icon-box.retirement,.icon-box.brokerage,.icon-box.crypto{background:var(--color-blue-highlight);color:var(--color-blue)}
+    .icon-box.loan,.icon-box.student_loan,.icon-box.auto_loan{background:var(--color-warning-highlight);color:var(--color-warning)}
+    .icon-box.mortgage{background:var(--color-gold-highlight);color:var(--color-gold)}
+    .item-name{font-weight:800;font-size:var(--text-sm)}
+    .item-meta{color:var(--color-text-muted);font-size:var(--text-xs);margin-top:2px}
+    .item-value{text-align:right;font-weight:900;font-size:var(--text-sm)}
+    .item-value-sub{display:block;color:var(--color-text-muted);font-size:var(--text-xs);margin-top:2px;font-weight:600}
+    .badge{display:inline-flex;align-items:center;padding:.2rem .55rem;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:800}
+    .badge-green{background:var(--color-success-highlight);color:var(--color-success)}
+    .badge-red{background:var(--color-error-highlight);color:var(--color-error)}
+    .badge-blue{background:var(--color-blue-highlight);color:var(--color-blue)}
     .badge-gold{background:var(--color-gold-highlight);color:var(--color-gold)}
-    .legend{display:flex;gap:var(--space-3);flex-wrap:wrap;margin-top:var(--space-4)}
-    .legend-item{display:inline-flex;align-items:center;gap:var(--space-2);color:var(--color-text-muted);font-size:var(--text-xs);font-weight:700}
-    .swatch{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-    .mobile-toggle{display:none}
-    /* DIALOG — no method=dialog, fully JS-controlled */
-    dialog{border:0;padding:0;width:min(640px,calc(100vw - 2rem));border-radius:var(--radius-xl);background:var(--color-surface);color:var(--color-text);box-shadow:var(--shadow-lg)}
-    dialog::backdrop{background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+    .badge-warn{background:var(--color-warning-highlight);color:var(--color-warning)}
+    .divider{height:1px;background:var(--color-divider);margin:var(--space-4) 0}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-3)}
+    .stack{display:flex;flex-direction:column;gap:var(--space-3)}
+    .muted{color:var(--color-text-muted)}
+    .mono{font-variant-numeric:tabular-nums}
+    .positive{color:var(--color-success)}
+    .negative{color:var(--color-error)}
+    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-4)}
+    .section-head h2{margin:0;font-size:var(--text-lg);font-weight:800}
+    .chart-wrap{position:relative;height:200px}
+    .chart-wrap-lg{position:relative;height:260px}
+    dialog{border:0;padding:0;width:min(580px,calc(100vw - 2rem));border-radius:var(--radius-xl);background:var(--color-surface);color:var(--color-text);box-shadow:var(--shadow-lg)}
+    dialog::backdrop{background:rgba(0,0,0,.5);backdrop-filter:blur(6px)}
     .modal{padding:var(--space-6)}
-    .modal h2{margin:0 0 var(--space-2);font-size:var(--text-lg)}
-    .modal p{margin:0 0 var(--space-5);color:var(--color-text-muted);font-size:var(--text-sm)}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-5)}
+    .modal-header h2{margin:0;font-size:var(--text-lg);font-weight:900}
     .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}
     .field{display:grid;gap:var(--space-2)}
     .field.full{grid-column:1/-1}
     label{font-size:var(--text-xs);font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted)}
-    input,select{min-height:46px;padding:.8rem .9rem;border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface-2);outline:none;-webkit-appearance:none;appearance:none;width:100%}
-    input:focus,select:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(1,105,111,.18)}
-    .modal-actions{display:flex;justify-content:flex-end;gap:var(--space-3);margin-top:var(--space-6);flex-wrap:wrap}
-    .empty-state{display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--space-16) var(--space-8);color:var(--color-text-muted)}
-    .empty-state h3{color:var(--color-text);margin-bottom:var(--space-2)}
-    .empty-state p{max-width:36ch;margin-bottom:var(--space-6)}
-    #mortgageFields,#loanFields{display:none}
-    @media (max-width:1180px){.kpi-grid,.two-col,.three-col{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media (max-width:960px){
+    input,select{min-height:46px;padding:.8rem .9rem;border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface-offset);outline:none;appearance:none;width:100%;font-size:var(--text-sm);color:var(--color-text);transition:border-color var(--transition),box-shadow var(--transition)}
+    input:focus,select:focus{border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(1,105,111,.15)}
+    .modal-footer{display:flex;justify-content:flex-end;gap:var(--space-3);margin-top:var(--space-6);flex-wrap:wrap}
+    .theme-toggle{width:40px;height:40px;border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface-2);display:inline-grid;place-items:center;color:var(--color-text-muted);cursor:pointer;transition:all var(--transition)}
+    .theme-toggle:hover{color:var(--color-text)}
+    .mobile-menu-btn{display:none}
+    @media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.two-col,.three-col{grid-template-columns:1fr}}
+    @media(max-width:900px){
       .shell{grid-template-columns:1fr}
-      .sidebar{position:fixed;inset:0 auto 0 0;width:min(320px,86vw);transform:translateX(-100%);transition:transform var(--transition);box-shadow:var(--shadow-lg);z-index:40;}
+      .sidebar{position:fixed;inset:0 auto 0 0;width:min(300px,85vw);transform:translateX(-100%);transition:transform var(--transition);box-shadow:var(--shadow-lg)}
       .sidebar.open{transform:translateX(0)}
       .topbar,.main{grid-column:1}
-      .mobile-toggle{display:inline-flex}
+      .mobile-menu-btn{display:inline-grid}
     }
-    @media (max-width:720px){
+    @media(max-width:640px){
+      .kpi-grid{grid-template-columns:1fr}
+      .form-grid{grid-template-columns:1fr}
       .main,.topbar{padding-inline:var(--space-4)}
-      .kpi-grid,.two-col,.three-col,.form-grid{grid-template-columns:1fr}
-      .topbar{align-items:flex-start}
-      .topbar-actions{width:100%;justify-content:flex-start}
+      .topbar{flex-wrap:wrap;gap:var(--space-2);padding-block:var(--space-3)}
     }
-    @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
   </style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="shell">
+
   <aside class="sidebar" id="sidebar" aria-label="Navigation">
     <div class="brand">
-      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="8" width="48" height="48" rx="16" stroke="currentColor" stroke-width="4"/><path d="M18 39C22 31 26 26 31 26C36 26 39 31 42 35C45 39 47 41 50 41" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M17 46H47" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="21" r="3.5" fill="currentColor"/></svg>
-      <div><div class="brand-title">Money Atlas</div><div class="brand-sub">Budget. Invest. Track. Decide.</div></div>
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect x="8" y="8" width="48" height="48" rx="14" stroke="currentColor" stroke-width="4"/><path d="M16 40c4-8 8-14 14-14s10 6 14 10c2 3 4 4 7 4" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><path d="M16 47h32" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><circle cx="33" cy="20" r="3" fill="currentColor"/></svg>
+      <div><div class="brand-title">Money Atlas</div><div class="brand-sub">Budget · Invest · Net Worth</div></div>
     </div>
     <nav aria-label="Primary">
       <div class="section-label">Pages</div>
       <div class="nav-group" id="navGroup">
-        <button class="nav-btn active" data-page="budget" type="button">
-          <span class="nav-icon" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-          </span>
+        <button class="nav-btn active" data-page="dashboard" type="button">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-btn" data-page="budget" type="button">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>
           <span>Budget</span>
         </button>
         <button class="nav-btn" data-page="investments" type="button">
-          <span class="nav-icon" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
-          </span>
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
           <span>Investments</span>
         </button>
         <button class="nav-btn" data-page="networth" type="button">
-          <span class="nav-icon" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-          </span>
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
           <span>Net Worth</span>
         </button>
         <button class="nav-btn" data-page="accounts" type="button">
-          <span class="nav-icon" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-          </span>
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span>
           <span>Accounts</span>
         </button>
         <button class="nav-btn" data-page="loans" type="button">
-          <span class="nav-icon" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 10v6M2 10l10-8 10 8"/><path d="M6 10v8h12v-8"/></svg>
-          </span>
-          <span>Student Loans</span>
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+          <span>Debt &amp; Loans</span>
         </button>
       </div>
     </nav>
-    <div class="sidebar-card">
-      <h3>The rule</h3>
-      <p>Track cash first. Build assets. Kill high-rate debt fast. Equity is built one payment at a time.</p>
-      <button class="btn btn-primary open-dialog-btn" type="button" style="wi
+    <div class="sidebar-tip">
+      <h4>Ramsey Rule</h4>
+      <p>Kill all debt except the mortgage. Every dollar of freed cashflow becomes a wealth-building weapon.</p>
+    </div>
+  </aside>
+
+  <header class="topbar" role="banner">
+    <div class="topbar-left">
+      <button class="btn btn-ghost icon-btn mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div>
+        <div class="topbar-title" id="pageTitle">Dashboard</div>
+        <div class="topbar-sub" id="pageSub">Your complete financial picture — June 2026</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-primary btn-sm" id="addAccountBtn" type="button">+ Add Account</button>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" id="themeIcon"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="main" id="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="grid kpi-grid">
+        <div class="card"><div class="card-title">Net Worth</div><div class="card-value positive" id="kpiNetWorth">$0</div><span class="delta up" id="kpiNWDelta">+$0</span><div class="card-sub">Assets minus all liabilities</div></div>
+        <div class="card"><div class="card-title">Total Assets</div><div class="card-value" id="kpiAssets">$0</div><div class="card-sub">Cash + Investments + Property</div></div>
+        <div class="card"><div class="card-title">Total Debt</div><div class="card-value negative" id="kpiDebt">$0</div><div class="card-sub">All outstanding balances</div></div>
+        <div class="card"><div class="card-title">Monthly Cashflow</div><div class="card-value" id="kpiCashflow">$0</div><div class="card-sub">Income minus expenses</div></div>
+      </div>
+      <div class="grid two-col">
+        <div class="card"><div class="card-header"><div class="card-title">Net Worth Over Time</div></div><div class="chart-wrap-lg"><canvas id="nwChart"></canvas></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Asset Allocation</div></div><div class="chart-wrap"><canvas id="allocChart"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="section-head"><h2>All Accounts</h2><button class="btn btn-sm" id="addAccountBtn2" type="button">+ Add Account</button></div>
+        <div id="dashAccountList"></div>
+      </div>
+    </div>
+
+    <!-- BUDGET -->
+    <div class="page" id="page-budget">
+      <div class="grid kpi-grid">
+        <div class="card"><div class="card-title">Monthly Income</div><div class="card-value positive" id="bIncome">$7,200</div><div class="card-sub">After-tax take-home</div></div>
+        <div class="card"><div class="card-title">Total Budgeted</div><div class="card-value" id="bBudgeted">$0</div><div class="card-sub">Fixed + variable spending</div></div>
+        <div class="card"><div class="card-title">Spent So Far</div><div class="card-value" id="bSpent">$0</div><div class="card-sub">Month-to-date actuals</div></div>
+        <div class="card"><div class="card-title">Remaining</div><div class="card-value" id="bRemaining">$0</div><div class="card-sub">Left to spend this month</div></div>
+      </div>
+      <div class="grid two-col">
+        <div class="card"><div class="card-header"><div class="card-title">Category Spending</div></div><div id="budgetBars"></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Spending Breakdown</div></div><div class="chart-wrap"><canvas id="budgetChart"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="section-head"><h2>Recent Transactions</h2></div>
+        <div class="table-wrap"><table><thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Status</th></tr></thead><tbody id="txBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- INVESTMENTS -->
+    <div class="page" id="page-investments">
+      <div class="grid kpi-grid">
+        <div class="card"><div class="card-title">Portfolio Value</div><div class="card-value" id="invTotal">$0</div><div class="card-sub">All investment accounts</div></div>
+        <div class="card"><div class="card-title">Total Gain/Loss</div><div class="card-value positive" id="invGain">$0</div><div class="card-sub">Unrealized gains</div></div>
+        <div class="card"><div class="card-title">YTD Return</div><div class="card-value" id="invYTD">+0.0%</div><div class="card-sub">Year-to-date performance</div></div>
+        <div class="card"><div class="card-title">Retirement (401k/IRA)</div><div class="card-value" id="invRetirement">$0</div><div class="card-sub">Tax-advantaged accounts</div></div>
+      </div>
+      <div class="grid two-col">
+        <div class="card"><div class="card-header"><div class="card-title">Portfolio Performance</div></div><div class="chart-wrap-lg"><canvas id="perfChart"></canvas></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Allocation by Type</div></div><div class="chart-wrap"><canvas id="invAllocChart"></canvas></div></div>
+      </div>
+      <div class="card"><div class="section-head"><h2>Holdings</h2></div><div id="holdingsList"></div></div>
+    </div>
+
+    <!-- NET WORTH -->
+    <div class="page" id="page-networth">
+      <div class="grid kpi-grid">
+        <div class="card"><div class="card-title">Net Worth Today</div><div class="card-value positive" id="nwToday">$0</div><div class="card-sub">Assets minus Liabilities</div></div>
+        <div class="card"><div class="card-title">1-Year Change</div><div class="card-value" id="nwYearChange">+$0</div><div class="card-sub">vs. 12 months ago</div></div>
+        <div class="card"><div class="card-title">Liquid Assets</div><div class="card-value" id="nwLiquid">$0</div><div class="card-sub">Cash + checking + savings</div></div>
+        <div class="card"><div class="card-title">Debt-to-Asset</div><div class="card-value" id="nwDTA">0%</div><div class="card-sub">Lower is healthier</div></div>
+      </div>
+      <div class="card" style="margin-bottom:var(--space-4)">
+        <div class="card-header"><div class="card-title">Net Worth Trajectory (12 months)</div></div>
+        <div class="chart-wrap-lg"><canvas id="nwTrajChart"></canvas></div>
+      </div>
+      <div class="grid two-col">
+        <div class="card"><div class="card-header"><div class="card-title">Assets Breakdown</div></div><div id="assetBreakdown"></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Liabilities Breakdown</div></div><div id="liabilityBreakdown"></div></div>
+      </div>
+    </div>
+
+    <!-- ACCOUNTS -->
+    <div class="page" id="page-accounts">
+      <div class="section-head"><h2>All Accounts</h2><button class="btn btn-primary" id="addAccountBtn3" type="button">+ Add Account</button></div>
+      <div id="accountsPageList"></div>
+    </div>
+
+    <!-- LOANS -->
+    <div class="page" id="page-loans">
+      <div class="grid kpi-grid">
+        <div class="card"><div class="card-title">Total Debt</div><div class="card-value negative" id="loanTotal">$0</div><div class="card-sub">All outstanding balances</div></div>
+        <div class="card"><div class="card-title">Monthly Payments</div><div class="card-value" id="loanMonthly">$0</div><div class="card-sub">Min payments across all debt</div></div>
+        <div class="card"><div class="card-title">Avg Interest Rate</div><div class="card-value" id="loanAvgRate">0%</div><div class="card-sub">Weighted average APR</div></div>
+        <div class="card"><div class="card-title">Debt-Free Date</div><div class="card-value" id="loanPayoffDate" style="font-size:var(--text-lg)">Calculating…</div><div class="card-sub">At current payment pace</div></div>
+      </div>
+      <div class="grid two-col" style="margin-bottom:var(--space-4)">
+        <div class="card"><div class="card-header"><div class="card-title">Debt Payoff Timeline</div></div><div class="chart-wrap-lg"><canvas id="debtChart"></canvas></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Debt by Type</div></div><div class="chart-wrap"><canvas id="debtTypeChart"></canvas></div></div>
+      </div>
+      <div class="card"><div class="section-head"><h2>Debt Accounts</h2></div><div id="loanList"></div></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ADD ACCOUNT DIALOG -->
+<dialog id="addAccountDialog" aria-modal="true" aria-labelledby="dialogTitle">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="dialogTitle">Add Account</h2>
+      <button class="btn btn-ghost icon-btn" id="closeDialog" aria-label="Close" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label for="accName">Account Name</label><input type="text" id="accName" placeholder="e.g. Chase Checking" required></div>
+      <div class="field"><label for="accInst">Institution</label><input type="text" id="accInst" placeholder="e.g. Chase Bank"></div>
+      <div class="field">
+        <label for="accType">Account Type</label>
+        <select id="accType">
+          <option value="checking">Checking</option>
+          <option value="savings">Savings</option>
+          <option value="credit">Credit Card</option>
+          <option value="investment">Brokerage</option>
+          <option value="retirement">Retirement (401k/IRA)</option>
+          <option value="crypto">Crypto</option>
+          <option value="student_loan">Student Loan</option>
+          <option value="auto_loan">Auto Loan</option>
+          <option value="mortgage">Mortgage</option>
+          <option value="loan">Personal Loan</option>
+        </select>
+      </div>
+      <div class="field"><label for="accBalance">Current Balance ($)</label><input type="number" id="accBalance" placeholder="0.00" step="0.01"></div>
+      <div class="field" id="rateFieldWrap"><label for="accRate">Interest Rate (%)</label><input type="number" id="accRate" placeholder="e.g. 5.25" step="0.01"></div>
+      <div class="field" id="minPayFieldWrap"><label for="accMinPay">Min Monthly Payment ($)</label><input type="number" id="accMinPay" placeholder="0.00" step="0.01"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="cancelDialog" type="button">Cancel</button>
+      <button class="btn btn-primary" id="saveAccount" type="button">Save Account</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(function(){
+"use strict";
+const html=document.documentElement;
+let theme=window.matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";
+html.setAttribute("data-theme",theme);
+const themeToggle=document.getElementById("themeToggle");
+const themeIcon=document.getElementById("themeIcon");
+function setThemeIcon(t){themeIcon.innerHTML=t==="dark"?'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>':'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';}
+setThemeIcon(theme);
+themeToggle.addEventListener("click",()=>{theme=theme==="dark"?"light":"dark";html.setAttribute("data-theme",theme);setThemeIcon(theme);renderCharts();});
+
+const pagesMeta={dashboard:{title:"Dashboard",sub:"Your complete financial picture — June 2026"},budget:{title:"Budget",sub:"Monthly spending tracker & category breakdown"},investments:{title:"Investments",sub:"Portfolio performance & holdings"},networth:{title:"Net Worth",sub:"Assets, liabilities, and trajectory over time"},accounts:{title:"Accounts",sub:"All linked accounts at a glance"},loans:{title:"Debt & Loans",sub:"Payoff tracker and interest analysis"}};
+let currentPage="dashboard";
+
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  const pg=document.getElementById("page-"+id);
+  if(pg)pg.classList.add("active");
+  document.querySelectorAll('.nav-btn[data-page="'+id+'"]').forEach(b=>b.classList.add("active"));
+  document.getElementById("pageTitle").textContent=pagesMeta[id]?.title||id;
+  document.getElementById("pageSub").textContent=pagesMeta[id]?.sub||"";
+  currentPage=id;
+  renderPageData(id);
+}
+
+document.getElementById("navGroup").addEventListener("click",e=>{const btn=e.target.closest(".nav-btn");if(btn)showPage(btn.dataset.page);});
+
+const sidebar=document.getElementById("sidebar");
+const overlay=document.getElementById("sidebarOverlay");
+const menuBtn=document.getElementById("mobileMenuBtn");
+function openSidebar(){sidebar.classList.add("open");overlay.classList.add("visible");menuBtn.setAttribute("aria-expanded","true");}
+function closeSidebar(){sidebar.classList.remove("open");overlay.classList.remove("visible");menuBtn.setAttribute("aria-expanded","false");}
+menuBtn.addEventListener("click",openSidebar);
+overlay.addEventListener("click",closeSidebar);
+sidebar.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",closeSidebar));
+
+let accounts=[
+  {id:1,name:"Chase Total Checking",institution:"Chase",type:"checking",balance:4820,rate:0,minPay:0},
+  {id:2,name:"Ally High-Yield Savings",institution:"Ally",type:"savings",balance:18500,rate:4.5,minPay:0},
+  {id:3,name:"Chase Sapphire Reserve",institution:"Chase",type:"credit",balance:-3200,rate:24.99,minPay:96},
+  {id:4,name:"Fidelity Brokerage",institution:"Fidelity",type:"investment",balance:42300,rate:0,minPay:0},
+  {id:5,name:"Fidelity 401(k)",institution:"Fidelity",type:"retirement",balance:67800,rate:0,minPay:0},
+  {id:6,name:"Roth IRA",institution:"Vanguard",type:"retirement",balance:24100,rate:0,minPay:0},
+  {id:7,name:"Federal Student Loan",institution:"MOHELA",type:"student_loan",balance:-18400,rate:5.05,minPay:210},
+  {id:8,name:"Auto Loan — Honda",institution:"Honda Fin.",type:"auto_loan",balance:-11200,rate:6.9,minPay:310},
+];
+let nextId=9;
+
+const holdings=[
+  {name:"VOO — Vanguard S&P 500",account:"Fidelity Brokerage",shares:48,price:524.12,gain:9840,type:"ETF"},
+  {name:"SCHB — Total Market",account:"Fidelity Brokerage",shares:110,price:109.54,gain:3220,type:"ETF"},
+  {name:"Target Date 2055",account:"Fidelity 401(k)",shares:0,price:0,gain:12400,type:"Fund"},
+  {name:"VXUS — Intl Stocks",account:"Fidelity Brokerage",shares:72,price:65.30,gain:1840,type:"ETF"},
+  {name:"Roth IRA — VTSAX",account:"Roth IRA",shares:0,price:0,gain:4200,type:"Fund"},
+];
+
+const budgetCategories=[
+  {name:"Housing",budget:1800,spent:1800,color:"#01696f"},
+  {name:"Food",budget:600,spent:520,color:"#006494"},
+  {name:"Transport",budget:450,spent:410,color:"#d19900"},
+  {name:"Utilities",budget:200,spent:178,color:"#437a22"},
+  {name:"Subscriptions",budget:120,spent:117,color:"#964219"},
+  {name:"Entertainment",budget:200,spent:155,color:"#a12c7b"},
+  {name:"Savings",budget:1000,spent:1000,color:"#4f98a3"},
+  {name:"Misc",budget:300,spent:210,color:"#7a5c00"},
+];
+
+const transactions=[
+  {date:"Jun 26",desc:"Whole Foods",cat:"Food",amt:-92.14,status:"cleared"},
+  {date:"Jun 25",desc:"Netflix",cat:"Subscriptions",amt:-15.99,status:"cleared"},
+  {date:"Jun 24",desc:"Shell Gas",cat:"Transport",amt:-54.00,status:"cleared"},
+  {date:"Jun 23",desc:"Paycheck",cat:"Income",amt:3600,status:"cleared"},
+  {date:"Jun 22",desc:"Rent",cat:"Housing",amt:-1800,status:"cleared"},
+  {date:"Jun 20",desc:"MOHELA Payment",cat:"Student Loan",amt:-210,status:"cleared"},
+  {date:"Jun 18",desc:"Amazon",cat:"Misc",amt:-67.43,status:"cleared"},
+  {date:"Jun 17",desc:"Gym Membership",cat:"Subscriptions",amt:-39.99,status:"cleared"},
+  {date:"Jun 15",desc:"Paycheck",cat:"Income",amt:3600,status:"cleared"},
+  {date:"Jun 14",desc:"Spotify",cat:"Subscriptions",amt:-11.99,status:"cleared"},
+];
+
+const nwHistory=[
+  {label:"Jul '25",nw:88200},{label:"Aug '25",nw:91400},{label:"Sep '25",nw:90100},
+  {label:"Oct '25",nw:94800},{label:"Nov '25",nw:98300},{label:"Dec '25",nw:103600},
+  {label:"Jan '26",nw:107200},{label:"Feb '26",nw:111900},{label:"Mar '26",nw:116400},
+  {label:"Apr '26",nw:119800},{label:"May '26",nw:122100},{label:"Jun '26",nw:0},
+];
+
+function getAssets(){return accounts.filter(a=>a.balance>0).reduce((s,a)=>s+a.balance,0)}
+function getDebt(){return accounts.filter(a=>a.balance<0).reduce((s,a)=>s+Math.abs(a.balance),0)}
+function getNetWorth(){return getAssets()-getDebt()}
+function getLiquid(){return accounts.filter(a=>["checking","savings"].includes(a.type)&&a.balance>0).reduce((s,a)=>s+a.balance,0)}
+function getInvTotal(){return accounts.filter(a=>["investment","retirement","brokerage","crypto"].includes(a.type)&&a.balance>0).reduce((s,a)=>s+a.balance,0)}
+function getRetirement(){return accounts.filter(a=>a.type==="retirement"&&a.balance>0).reduce((s,a)=>s+a.balance,0)}
+function getDebts(){return accounts.filter(a=>a.balance<0)}
+function getAvgRate(){const debts=getDebts();if(!debts.length)return 0;const tot=debts.reduce((s,a)=>s+Math.abs(a.balance),0);return debts.reduce((s,a)=>s+(a.rate*Math.abs(a.balance)/tot),0)}
+function getMonthlyIncome(){return 7200}
+function getMonthlySpend(){return budgetCategories.filter(c=>c.name!=="Savings").reduce((s,c)=>s+c.spent,0)}
+function getMonthlyPayments(){return accounts.filter(a=>a.minPay>0).reduce((s,a)=>s+a.minPay,0)}
+function getCashflow(){return getMonthlyIncome()-getMonthlySpend()-getMonthlyPayments()}
+
+function fmt(n,showPlus){const abs=Math.abs(n);const s=abs>=1e6?"$"+(abs/1e6).toFixed(2)+"M":abs>=1e3?"$"+(abs/1e3).toFixed(1)+"k":"$"+abs.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0});return(showPlus&&n>0?"+":n<0?"-":"")+s}
+function pct(n){return(n>=0?"+":"")+n.toFixed(1)+"%"}
+function typeLabel(t){return({checking:"Checking",savings:"Savings",credit:"Credit Card",investment:"Brokerage",retirement:"Retirement",crypto:"Crypto",student_loan:"Student Loan",auto_loan:"Auto Loan",mortgage:"Mortgage",loan:"Personal Loan"})[t]||t}
+function typeIcon(t){return({checking:"CHK",savings:"SAV",credit:"CC",investment:"INV",retirement:"RET",crypto:"CRY",student_loan:"SL",auto_loan:"AUTO",mortgage:"MORT",loan:"LOAN"})[t]||"ACC"}
+function catColor(i){return["#01696f","#006494","#d19900","#437a22","#964219","#a12c7b","#4f98a3","#7a5c00"][i%8]}
+
+const charts={};
+function makeChart(id,config){if(charts[id]){charts[id].destroy();delete charts[id]}const c=document.getElementById(id);if(!c)return;charts[id]=new Chart(c.getContext("2d"),config)}
+function gc(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+
+function renderDashboard(){
+  const nw=getNetWorth(),assets=getAssets(),debt=getDebt(),cf=getCashflow();
+  document.getElementById("kpiNetWorth").textContent=fmt(nw);
+  document.getElementById("kpiNetWorth").className="card-value "+(nw>=0?"positive":"negative");
+  document.getElementById("kpiNWDelta").textContent=fmt(nw-nwHistory[10].nw,true);
+  document.getElementById("kpiNWDelta").className="delta "+(nw>=nwHistory[10].nw?"up":"down");
+  document.getElementById("kpiAssets").textContent=fmt(assets);
+  document.getElementById("kpiDebt").textContent=fmt(debt);
+  document.getElementById("kpiCashflow").textContent=fmt(cf);
+  document.getElementById("kpiCashflow").className="card-value "+(cf>=0?"positive":"negative");
+  const el=document.getElementById("dashAccountList");
+  el.innerHTML=accounts.map(a=>`<div class="item-row"><div class="icon-box ${a.type}">${typeIcon(a.type)}</div><div><div class="item-name">${a.name}</div><div class="item-meta">${a.institution} · ${typeLabel(a.type)}</div></div><div class="item-value ${a.balance<0?"negative":""}">${fmt(a.balance)}<span class="item-value-sub">${a.rate>0?a.rate+"% APR":a.balance<0?"Liability":"Asset"}</span></div></div>`).join("");
+  nwHistory[11].nw=nw;
+  makeChart("nwChart",{type:"line",data:{labels:nwHistory.map(p=>p.label),datasets:[{label:"Net Worth",data:nwHistory.map(p=>p.nw),borderColor:gc("--color-primary"),backgroundColor:"rgba(1,105,111,.08)",fill:true,tension:.42,pointRadius:3,pointBackgroundColor:gc("--color-primary")}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:"rgba(0,0,0,.05)"},ticks:{color:gc("--color-text-muted"),font:{size:11}}},y:{grid:{color:"rgba(0,0,0,.05)"},ticks:{color:gc("--color-text-muted"),font:{size:11},callback:v=>"$"+(v/1000).toFixed(0)+"k"}}}}});
+  const at=[{label:"Cash",val:getLiquid()},{label:"Investments",val:getInvTotal()}].filter(x=>x.val>0);
+  makeChart("allocChart",{type:"doughnut",data:{labels:at.map(x=>x.label),datasets:[{data:at.map(x=>x.val),backgroundColor:["#01696f","#006494"],borderWidth:0,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:"65%",plugins:{legend:{position:"bottom",labels:{color:gc("--color-text-muted"),font:{size:11},padding:12}}}}});
+}
+
+function renderBudget(){
+  const tb=budgetCategories.reduce((s,c)=>s+c.budget,0),ts=budgetCategories.reduce((s,c)=>s+c.spent,0),inc=getMonthlyIncome();
+  document.getElementById("bIncome").textContent=fmt(inc);
+  document.getElementById("bBudgeted").textContent=fmt(tb);
+  document.getElementById("bSpent").textContent=fmt(ts);
+  document.getElementById("bRemaining").textContent=fmt(inc-ts);
+  document.getElementById("bRemaining").className="card-value "+(inc-ts>=0?"positive":"negative");
+  const barsEl=document.getElementById("budgetBars");
+  barsEl.innerHTML=budgetCategories.map(c=>{const p=Math.min(100,(c.spent/c.budget)*100);const cls=p>=100?"danger":p>=85?"warn":"good";return`<div class="bar-row"><div class="bar-meta"><span class="bar-name">${c.name}</span><span class="muted">${fmt(c.spent)} / ${fmt(c.budget)}</span></div><div class="bar-track"><div class="bar-fill ${cls}" style="width:${p}%"></div></div></div>`}).join("");
+  setTimeout(()=>{barsEl.querySelectorAll(".bar-fill").forEach(b=>{const w=b.style.width;b.style.width="0";requestAnimationFrame(()=>{b.style.width=w;})});},50);
+  makeChart("budgetChart",{type:"doughnut",data:{labels:budgetCategories.map(c=>c.name),datasets:[{data:budgetCategories.map(c=>c.spent),backgroundColor:budgetCategories.map((_,i)=>catColor(i)),borderWidth:0,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:"60%",plugins:{legend:{position:"bottom",labels:{color:gc("--color-text-muted"),font:{size:10},padding:8}}}}});
+  document.getElementById("txBody").innerHTML=transactions.map(tx=>`<tr><td class="muted">${tx.date}</td><td>${tx.desc}</td><td><span class="badge badge-blue">${tx.cat}</span></td><td class="mono ${tx.amt>0?"positive":"negative"}">${fmt(tx.amt,tx.amt>0)}</td><td><span class="badge ${tx.status==="cleared"?"badge-green":"badge-gold"}">${tx.status}</span></td></tr>`).join("");
+}
+
+function renderInvestments(){
+  const invTotal=getInvTotal(),invGain=holdings.reduce((s,h)=>s+h.gain,0),ytd=invTotal>0?(invGain/(invTotal-invGain)*100):0;
+  document.getElementById("invTotal").textContent=fmt(invTotal);
+  document.getElementById("invGain").textContent=fmt(invGain,true);
+  document.getElementById("invGain").className="card-value "+(invGain>=0?"positive":"negative");
+  document.getElementById("invYTD").textContent=pct(ytd);
+  document.getElementById("invYTD").className="card-value "+(ytd>=0?"positive":"negative");
+  document.getElementById("invRetirement").textContent=fmt(getRetirement());
+  makeChart("perfChart",{type:"line",data:{labels:["Jan","Feb","Mar","Apr","May","Jun"],datasets:[{label:"Portfolio",data:[108200,112800,117400,122100,130600,invTotal],borderColor:gc("--color-blue"),backgroundColor:"rgba(0,100,148,.08)",fill:true,tension:.4,pointRadius:4,pointBackgroundColor:gc("--color-blue")}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:"rgba(0,0,0,.05)"},ticks:{color:gc("--color-text-muted"),font:{size:11}}},y:{grid:{color:"rgba(0,0,0,.05)"},ticks:{color:gc("--color-text-muted"),font:{size:11},callback:v=>"$"+(v/1000).toFixed(0)+"k"}}}}});
+  const it=[{label:"ETFs",val:accounts.filter(a=>a.type==="investment"&&a.balance>0).reduce((s,a)=>s+a.balance,0)},{label:"Retirement",val:getRetirement()}].filter(x=>x.val>0);
+  makeChart("invAllocChart",{type:"doughnut",data:{labels:it.map(x=>x.label),datasets:[{data:it.map(x=>x.val),backgroundColor:["#006494","#01696f"],borderWidth:0,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:"65%",plugins:{legend:{position:"bottom",labels:{color:gc("--color-text-muted"),font:{size:11},padding:12}}}}});
+  document.getElementById("holdingsList").innerHTML=holdings.map(h=>`<div class="item-row"><div class="icon-box investment">${h.type}</div><div><div class="item-name">${h.name}</div><div class="item-meta">${h.account}${h.shares>0?" · "+h.shares+" shares":""}</div></div><div class="item-value">${h.shares>0?fmt(h.shares*h.price):"Managed Fund"}<span class="item-value-sub ${h.gain>=0?"positive":"negative"}">${fmt(h.gain,true)} gain</span></div></div>`).join("");
+}
+
+function renderNetWorth(){
+  const nw=getNetWorth(),assets=getAssets(),debt=getDebt(),liquid=getLiquid(),prev=nwHistory[0].nw,dta=assets>0?(debt/assets*100):0;
+  document.getElementById("nwToday").textContent=fmt(nw);
+  document.getElementById("nwToday").className="card-value "+(nw>=0?"positive":"negative");
+  document.getElementById("nwYearChange").textContent=fmt(nw-prev,true);
+  document.getElementById("nwYearChange").className="card-value "+(nw>=prev?"positive":"negative");
+  document.getElementById("nwLiquid").textContent=fmt(liquid);
+  document.getElementById("nwDTA").textContent=dta.toFixed(1)+"%";
+  nwHistory[11].nw=nw;
+  makeChart("nwTrajChart",{type:"line",data:{labels:nwHistory.map(p=>p.label),datasets:[{label:"Net Worth",data:nwHistory.map(p=>p.nw),borderColor:gc("--color-primary"),backgroundColor:"rgba(1,105,111,.1)",fill:true,tension:.42,pointRadius:4,pointBackgroundColor:gc("--color-primary")}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:"rgba(0,0,0,.05)"},ticks:{color:gc("--color-text-muted"),font:{size:11}}},y:{grid:{color:"rgba(0,0,0,.05)"},ticks:{color:gc("--color-text-muted"),font:{size:11},callback:v=>"$"+(v/1000).toFixed(0)+"k"}}}}});
+  document.getElementById("assetBreakdown").innerHTML=accounts.filter(a=>a.balance>0).map(a=>`<div class="item-row"><div class="icon-box ${a.type}">${typeIcon(a.type)}</div><div><div class="item-name">${a.name}</div><div class="item-meta">${typeLabel(a.type)}</div></div><div class="item-value positive">${fmt(a.balance)}</div></div>`).join("");
+  document.getElementById("liabilityBreakdown").innerHTML=accounts.filter(a=>a.balance<0).map(a=>`<div class="item-row"><div class="icon-box ${a.type}">${typeIcon(a.type)}</div><div><div class="item-name">${a.name}</div><div class="item-meta">${typeLabel(a.type)}</div></div><div class="item-value negative">${fmt(a.balance)}</div></div>`).join("");
+}
+
+function renderAccounts(){
+  const el=document.getElementById("accountsPageList");
+  const assets=accounts.filter(a=>a.balance>=0),liabs=accounts.filter(a=>a.balance<0);
+  let html="";
+  if(assets.length){html+=`<div class="section-head" style="margin-top:var(--space-4)"><h2>Assets</h2></div>`;html+=assets.map(a=>`<div class="item-row"><div class="icon-box ${a.type}">${typeIcon(a.type)}</div><div><div class="item-name">${a.name}</div><div class="item-meta">${a.institution} · ${typeLabel(a.type)}${a.rate>0?" · "+a.rate+"% APR":""}</div></div><div class="item-value">${fmt(a.balance)}<span class="item-value-sub">Asset</span></div></div>`).join("");}
+  if(liabs.length){html+=`<div class="section-head" style="margin-top:var(--space-4)"><h2>Liabilities</h2></div>`;html+=liabs.map(a=>`<div class="item-row"><div class="icon-box ${a.type}">${typeIcon(a.type)}</div><div><div class="item-name">${a.name}</div><div class="item-meta">${a.institution} · ${typeLabel(a.type)}${a.rate>0?" · "+a.rate+"% APR":""}</div>${a.minPay>0?`<span class="badge badge-warn">${fmt(a.minPay)}/mo min</span>`:""}</div><div class="item-value negative">${fmt(a.balance)}<span class="item-value-sub">Liability</span></div></div>`).join("");}
+  el.innerHTML=html;
+}
+
+function renderLoans(){
+  const debts=getDebts(),totalDebt=getDebt(),monthlyPay=debts.reduce((s,a)=>s+a.minPay,0),avgRate=getAvgRate();
+  document.getElementById("loanTotal").textContent=fmt(totalDebt);
+  document.getElementById("loanMonthly").textContent=fmt(monthlyPay);
+  document.getElementById("loanAvgRate").textContent=avgRate.toFixed(2)+"%";
+  let payoffMonths=0;
+  if(monthlyPay>0&&totalDebt>0){let bal=totalDebt,rate=avgRate/100/12,m=0;while(bal>0&&m<600){bal=bal*(1+rate)-monthlyPay;m++;}payoffMonths=m;}
+  if(payoffMonths>0&&payoffMonths<600){const d=new Date();d.setMonth(d.getMonth()+payoffMonths);document.getElementById("loanPayoffDate").textContent=d.toLocaleDateString("en-US",{month:"short",year:"numeric"});}else{document.getElementById("loanPayoffDate").textContent="Increase payments";}
+  const months=Array.from({length:37},(_,i)=>i);
+  const datasets=debts.map((d,i)=>{const rate=d.rate/100/12;let bal=Math.abs(d.balance);const data=[bal];for(let m=1;m<=36;m++){bal=Math.max(0,bal*(1+rate)-d.minPay);data.push(bal);}return{label:d.name,data,borderColor:catColor(i),backgroundColor:"transparent",tension:.4,pointRadius:0,borderWidth:2};});
+  makeChart("debtChart",{type:"line",data:{labels:months.map(m=>m===0?"Now":"Mo "+m),datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{color:gc("--color-text-muted"),font:{size:10},padding:8}}},scales:{x:{ticks:{maxTicksLimit:7,color:gc("--color-text-muted"),font:{size:11}},grid:{color:"rgba(0,0,0,.05)"}},y:{ticks:{color:gc("--color-text-muted"),font:{size:11},callback:v=>"$"+(v/1000).toFixed(0)+"k"},grid:{color:"rgba(0,0,0,.05)"}}}}});
+  makeChart("debtTypeChart",{type:"doughnut",data:{labels:debts.map(d=>typeLabel(d.type)),datasets:[{data:debts.map(d=>Math.abs(d.balance)),backgroundColor:debts.map((_,i)=>catColor(i)),borderWidth:0,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:"65%",plugins:{legend:{position:"bottom",labels:{color:gc("--color-text-muted"),font:{size:11},padding:12}}}}});
+  document.getElementById("loanList").innerHTML=debts.map(d=>`<div class="item-row"><div class="icon-box ${d.type}">${typeIcon(d.type)}</div><div><div class="item-name">${d.name}</div><div class="item-meta">${d.institution} · ${d.rate}% APR</div><span class="badge badge-warn">${fmt(d.minPay)}/mo min</span></div><div class="item-value negative">${fmt(d.balance)}<span class="item-value-sub">Balance</span></div></div>`).join("");
+}
+
+function renderPageData(id){
+  if(id==="dashboard")renderDashboard();
+  else if(id==="budget")renderBudget();
+  else if(id==="investments")renderInvestments();
+  else if(id==="networth")renderNetWorth();
+  else if(id==="accounts")renderAccounts();
+  else if(id==="loans")renderLoans();
+}
+function renderCharts(){renderPageData(currentPage);}
+
+const dialog=document.getElementById("addAccountDialog");
+const rateWrap=document.getElementById("rateFieldWrap");
+const minPayWrap=document.getElementById("minPayFieldWrap");
+const typeSelect=document.getElementById("accType");
+function updateDialogFields(){const isDebt=["credit","student_loan","auto_loan","mortgage","loan"].includes(typeSelect.value);rateWrap.style.display=isDebt?"grid":"none";minPayWrap.style.display=isDebt?"grid":"none";}
+typeSelect.addEventListener("change",updateDialogFields);
+function openDialog(){dialog.showModal();updateDialogFields();}
+function closeDialogFn(){dialog.close();document.getElementById("accName").value="";document.getElementById("accInst").value="";document.getElementById("accBalance").value="";document.getElementById("accRate").value="";document.getElementById("accMinPay").value="";typeSelect.value="checking";updateDialogFields();}
+["addAccountBtn","addAccountBtn2","addAccountBtn3"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener("click",openDialog);});
+document.getElementById("closeDialog").addEventListener("click",closeDialogFn);
+document.getElementById("cancelDialog").addEventListener("click",closeDialogFn);
+dialog.addEventListener("click",e=>{if(e.target===dialog)closeDialogFn();});
+document.getElementById("saveAccount").addEventListener("click",()=>{
+  const name=document.getElementById("accName").value.trim();
+  if(!name){document.getElementById("accName").focus();return;}
+  const inst=document.getElementById("accInst").value.trim();
+  const type=typeSelect.value;
+  const rawBal=parseFloat(document.getElementById("accBalance").value)||0;
+  const rate=parseFloat(document.getElementById("accRate").value)||0;
+  const minPay=parseFloat(document.getElementById("accMinPay").value)||0;
+  const isDebt=["credit","student_loan","auto_loan","mortgage","loan"].includes(type);
+  const balance=isDebt?-Math.abs(rawBal):Math.abs(rawBal);
+  accounts.push({id:nextId++,name,institution:inst||"—",type,balance,rate,minPay:isDebt?minPay:0});
+  closeDialogFn();
+  renderPageData(currentPage);
+});
+
+renderDashboard();
+})();
+</script>
+</body>
+</html>
