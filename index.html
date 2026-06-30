@@ -176,6 +176,10 @@
     .confirm-title{font-size:var(--text-lg);font-weight:900;margin:0 0 var(--space-2)}
     .confirm-msg{font-size:var(--text-sm);color:var(--color-text-muted);margin:0 0 var(--space-6)}
     .confirm-actions{display:flex;justify-content:flex-end;gap:var(--space-3)}
+    /* ── Asset/Liability badge ── */
+    .acc-type-badge{display:inline-flex;align-items:center;gap:var(--space-2);padding:.3rem .7rem;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:800;letter-spacing:.04em;margin-top:var(--space-2);transition:all var(--transition)}
+    .acc-type-badge.asset{background:var(--color-success-highlight);color:var(--color-success)}
+    .acc-type-badge.liability{background:var(--color-error-highlight);color:var(--color-error)}
     dialog{border:0;padding:0;width:min(580px,calc(100vw - 2rem));border-radius:var(--radius-xl);background:var(--color-surface);color:var(--color-text);box-shadow:var(--shadow-lg)}
     dialog::backdrop{background:rgba(0,0,0,.5);backdrop-filter:blur(6px)}
     .modal{padding:var(--space-6)}
@@ -406,6 +410,10 @@
           <option value="mortgage">Mortgage</option>
           <option value="loan">Personal Loan</option>
         </select>
+        <span class="acc-type-badge asset" id="accTypeBadge" aria-live="polite">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+          Asset
+        </span>
       </div>
       <div class="field"><label for="accBalance">Current Balance ($)</label><input type="number" id="accBalance" placeholder="0.00" step="0.01"></div>
       <div class="field" id="rateFieldWrap"><label for="accRate">Interest Rate (%)</label><input type="number" id="accRate" placeholder="e.g. 5.25" step="0.01"></div>
@@ -709,13 +717,26 @@ function renderPageData(id){
 // ── Add Account Dialog ──
 const dialog=document.getElementById("addAccountDialog");
 function openDialog(){dialog.showModal();}
-function closeDialogFn(){dialog.close();document.getElementById("accName").value="";document.getElementById("accInst").value="";document.getElementById("accBalance").value="";document.getElementById("accRate").value="";document.getElementById("accMinPay").value="";document.getElementById("chkHoldings").checked=false;document.getElementById("chkMultiple").checked=false;document.getElementById("holdingsSection").classList.remove("visible");document.getElementById("holdingInputs").innerHTML="";}
+function closeDialogFn(){dialog.close();document.getElementById("accName").value="";document.getElementById("accInst").value="";document.getElementById("accBalance").value="";document.getElementById("accRate").value="";document.getElementById("accMinPay").value="";document.getElementById("chkHoldings").checked=false;document.getElementById("chkMultiple").checked=false;document.getElementById("holdingsSection").classList.remove("visible");document.getElementById("holdingInputs").innerHTML="";updateAccTypeBadge("checking");document.getElementById("accType").value="checking";}
 document.getElementById("addAccountBtn").addEventListener("click",openDialog);
 document.getElementById("addAccountBtn2").addEventListener("click",openDialog);
 document.getElementById("addAccountBtn3").addEventListener("click",openDialog);
 document.getElementById("closeDialog").addEventListener("click",closeDialogFn);
 document.getElementById("cancelDialog").addEventListener("click",closeDialogFn);
 dialog.addEventListener("click",e=>{if(e.target===dialog)closeDialogFn();});
+
+// ── Asset/Liability badge ──
+const DEBT_TYPES=new Set(["credit","loan","student_loan","auto_loan","mortgage"]);
+const accTypeBadge=document.getElementById("accTypeBadge");
+function updateAccTypeBadge(val){
+  const isD=DEBT_TYPES.has(val);
+  accTypeBadge.className="acc-type-badge "+(isD?"liability":"asset");
+  accTypeBadge.innerHTML=(isD
+    ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg> Liability'
+    : '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg> Asset');
+}
+document.getElementById("accType").addEventListener("change",e=>updateAccTypeBadge(e.target.value));
+
 document.getElementById("chkHoldings").addEventListener("change",e=>{document.getElementById("holdingsSection").classList.toggle("visible",e.target.checked);});
 let holdingCounter=0;
 document.getElementById("addHoldingRow").addEventListener("click",()=>{
